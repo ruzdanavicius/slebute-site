@@ -371,8 +371,16 @@
 
   .stock-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
-    gap: 1.25rem;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 560px) {
+    .stock-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (min-width: 860px) {
+    .stock-grid { grid-template-columns: repeat(3, 1fr); }
   }
 
   .stock-card {
@@ -385,8 +393,43 @@
   }
 
   .stock-swatch {
-    aspect-ratio: 4 / 3;
+    position: relative;
+    aspect-ratio: 3 / 4;
     width: 100%;
+    overflow: hidden;
+    touch-action: pan-y;
+  }
+
+  .stock-swatch.has-multi { cursor: pointer; }
+
+  .stock-swatch img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .stock-dots {
+    position: absolute;
+    bottom: 0.65rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.35rem;
+  }
+
+  .stock-dots .dot-nav {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.55);
+    transition: 0.2s;
+  }
+
+  .stock-dots .dot-nav.active {
+    background: #fff;
+    width: 14px;
+    border-radius: 3px;
   }
 
   .stock-body {
@@ -749,20 +792,78 @@
   var SUPABASE_URL = 'https://bpxakmnifkrsbjhiytqf.supabase.co';
   var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJweGFrbW5pZmtyc2JqaGl5dHFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2MTMzNDgsImV4cCI6MjA4MDE4OTM0OH0.kgfljhRJeLtBIy7U8QU7DEGgRdBwcquH9QVLuhalMEY';
 
+  // Builds the product image area. Already supports N images (dots + click
+  // to advance + touch swipe) even though every product today has at most
+  // one photo — ready for multiple colors/angles once that data exists,
+  // with no further frontend changes needed.
+  function buildStockSwatch(images, altBase) {
+    var swatch = document.createElement('div');
+    swatch.className = 'stock-swatch';
+
+    if (!images.length) {
+      swatch.style.background = 'var(--accent-tint)';
+      swatch.setAttribute('aria-hidden', 'true');
+      return swatch;
+    }
+
+    var img = document.createElement('img');
+    img.src = images[0];
+    img.alt = altBase;
+    img.loading = 'lazy';
+    swatch.appendChild(img);
+
+    if (images.length === 1) return swatch;
+
+    swatch.classList.add('has-multi');
+    var index = 0;
+
+    var dotsWrap = document.createElement('span');
+    dotsWrap.className = 'stock-dots';
+    dotsWrap.setAttribute('aria-hidden', 'true');
+    var dotEls = images.map(function () {
+      var d = document.createElement('span');
+      d.className = 'dot-nav';
+      dotsWrap.appendChild(d);
+      return d;
+    });
+    swatch.appendChild(dotsWrap);
+
+    function render() {
+      img.src = images[index];
+      img.alt = altBase + ' (' + (index + 1) + '/' + images.length + ')';
+      dotEls.forEach(function (d, i) { d.classList.toggle('active', i === index); });
+    }
+    render();
+
+    function go(delta) {
+      index = (index + delta + images.length) % images.length;
+      render();
+    }
+
+    swatch.addEventListener('click', function () { go(1); });
+
+    // Touch swipe — left advances, right goes back. Threshold avoids
+    // treating an accidental tap or vertical scroll as a swipe.
+    var touchStartX = null;
+    swatch.addEventListener('touchstart', function (e) {
+      touchStartX = e.changedTouches[0].clientX;
+    }, { passive: true });
+    swatch.addEventListener('touchend', function (e) {
+      if (touchStartX === null) return;
+      var dx = e.changedTouches[0].clientX - touchStartX;
+      touchStartX = null;
+      if (Math.abs(dx) < 40) return;
+      go(dx < 0 ? 1 : -1);
+    }, { passive: true });
+
+    return swatch;
+  }
+
   function renderStockCard(item) {
     var article = document.createElement('article');
     article.className = 'stock-card';
 
-    var swatch = document.createElement('div');
-    swatch.className = 'stock-swatch';
-    if (item.image_url) {
-      swatch.style.backgroundImage = 'url(' + item.image_url + ')';
-      swatch.style.backgroundSize = 'cover';
-      swatch.style.backgroundPosition = 'center';
-    } else {
-      swatch.style.background = 'var(--accent-tint)';
-    }
-    swatch.setAttribute('aria-hidden', 'true');
+    var swatch = buildStockSwatch(item.images || [], item.name);
     article.appendChild(swatch);
 
     var body = document.createElement('div');
@@ -828,7 +929,7 @@
       if (!items || !items.length) {
         var empty = document.createElement('p');
         empty.className = 'stock-empty';
-        empty.textContent = 'Naujienos ruošiamos — netrukus pamatysite čia mūsų prekes.';
+        empty.textContent = 'Informacija ruošiama - netrukus čia pamatysite mūsų populiariausias prekes.';
         grid.appendChild(empty);
         return;
       }
