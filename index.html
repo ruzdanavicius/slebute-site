@@ -93,8 +93,12 @@
 
   .brand span { color: var(--accent-color); }
 
-  .brand-logo {
+  .hero-brand {
     width: min(100%, 460px);
+  }
+
+  .brand-logo {
+    width: 100%;
     height: auto;
     display: block;
   }
@@ -107,6 +111,7 @@
   }
 
   .hero-kicker {
+    width: 100%;
     margin-top: 0.85rem;
     text-align: center;
     font-weight: 700;
@@ -346,8 +351,10 @@
 <header class="hero">
   <div class="hero-shape" aria-hidden="true"></div>
   <div class="wrap">
-    <img class="brand-logo" src="assets/logo-mark.png" width="1538" height="527" alt="Slebutė">
-    <p class="hero-kicker">MOTERIŠKI DRABUŽIAI</p>
+    <div class="hero-brand">
+      <img class="brand-logo" src="assets/logo-mark.png" width="1538" height="527" alt="Slebutė">
+      <p class="hero-kicker">MOTERIŠKI DRABUŽIAI</p>
+    </div>
     <nav class="hero-nav" aria-label="Greitos nuorodos">
       <a class="btn btn-primary" href="#parduotuves">Parduotuvės</a>
       <a class="btn btn-ghost" href="#kontaktai">Kontaktai</a>
@@ -374,13 +381,13 @@
           <div class="store-media">
             <div class="store-map">
               <iframe
-                src="https://www.google.com/maps?q=%C5%A0e%C5%A1kin%C4%97s%20g.%2032,%20Vilnius,%2007157&output=embed"
+                src="https://www.google.com/maps?q=54.7152955,25.2464482&hl=lt&z=16&output=embed"
                 loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"
                 title="Slebutė Šeškinė žemėlapyje"
                 aria-label="Slebutė Šeškinė žemėlapyje"></iframe>
             </div>
-            <a class="store-qr" href="https://www.google.com/maps/dir/?api=1&destination=%C5%A0e%C5%A1kin%C4%97s%20g.%2032,%20Vilnius,%2007157" target="_blank" rel="noopener">
+            <a class="store-qr" href="https://www.google.com/maps/dir/?api=1&destination=54.7152955,25.2464482" target="_blank" rel="noopener">
               <img src="assets/qr-seskine.png" width="140" height="140" alt="QR kodas su nuoroda į kryptis iki Slebutė Šeškinė">
               <span>Nuskenuokite krypčiai</span>
             </a>
@@ -398,13 +405,13 @@
           <div class="store-media">
             <div class="store-map">
               <iframe
-                src="https://www.google.com/maps?q=Laisv%C4%97s%20pr.%2082,%20Vilnius,%2006128&output=embed"
+                src="https://www.google.com/maps?q=54.7244919,25.2328594&hl=lt&z=16&output=embed"
                 loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"
                 title="Slebutė Pašilaičiai žemėlapyje"
                 aria-label="Slebutė Pašilaičiai žemėlapyje"></iframe>
             </div>
-            <a class="store-qr" href="https://www.google.com/maps/dir/?api=1&destination=Laisv%C4%97s%20pr.%2082,%20Vilnius,%2006128" target="_blank" rel="noopener">
+            <a class="store-qr" href="https://www.google.com/maps/dir/?api=1&destination=54.7244919,25.2328594" target="_blank" rel="noopener">
               <img src="assets/qr-pasilaiciai.png" width="140" height="140" alt="QR kodas su nuoroda į kryptis iki Slebutė Pašilaičiai">
               <span>Nuskenuokite krypčiai</span>
             </a>
