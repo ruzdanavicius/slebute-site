@@ -101,7 +101,7 @@
   .brand span { color: var(--accent-color); }
 
   .hero-brand {
-    width: min(100%, 460px);
+    width: min(65%, 260px);
   }
 
   .brand-logo {
@@ -154,6 +154,23 @@
     border-color: var(--border-soft);
   }
   .btn-ghost:hover { border-color: var(--accent-color); color: var(--accent-color); }
+
+  /* Nav links get a lighter, near-invisible treatment than the CTA
+     buttons elsewhere on the page — transparent until hovered. */
+  .hero-nav .btn {
+    background: transparent;
+    color: var(--text-primary);
+    border-color: transparent;
+    padding: 0.55rem 1.1rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+  }
+
+  .hero-nav .btn:hover {
+    background: var(--accent-tint);
+    border-color: var(--border-soft);
+    color: var(--accent-color);
+  }
 
   /* ---------- Stores ---------- */
 
@@ -492,9 +509,9 @@
 
         <article class="store-card">
           <div
-            class="store-gallery is-placeholder"
-            data-photos='[{"src":"assets/placeholder-outside.svg","alt":"Slebutė Pašilaičiai – lauko vaizdas (nuotrauka bus pridėta)","tag":"IŠORĖ"},{"src":"assets/placeholder-inside.svg","alt":"Slebutė Pašilaičiai – vidaus vaizdas (nuotrauka bus pridėta)","tag":"VIDUS"}]'>
-            <img class="store-gallery-img" src="assets/placeholder-outside.svg" alt="Slebutė Pašilaičiai – lauko vaizdas (nuotrauka bus pridėta)">
+            class="store-gallery"
+            data-photos='[{"src":"assets/pasilaiciai-outside.jpg","alt":"Slebutė Pašilaičiai – parduotuvės įėjimas prekybos centre","tag":"IŠORĖ"},{"src":"assets/pasilaiciai-inside.jpg","alt":"Slebutė Pašilaičiai – parduotuvės vidus","tag":"VIDUS"}]'>
+            <img class="store-gallery-img" src="assets/pasilaiciai-outside.jpg" alt="Slebutė Pašilaičiai – parduotuvės įėjimas prekybos centre">
             <span class="store-gallery-tag">IŠORĖ</span>
             <span class="store-gallery-hint">⟳ Spauskite</span>
             <span class="store-gallery-dots" aria-hidden="true">
