@@ -93,6 +93,12 @@
 
   .brand span { color: var(--accent-color); }
 
+  .brand-logo {
+    width: min(100%, 460px);
+    height: auto;
+    display: block;
+  }
+
   .tagline {
     margin-top: 0.75rem;
     font-size: clamp(1rem, 2.4vw, 1.25rem);
@@ -278,7 +284,7 @@
 <header class="hero">
   <div class="hero-shape" aria-hidden="true"></div>
   <div class="wrap">
-    <p class="brand">Sleb<span>u</span>tė</p>
+    <img class="brand-logo" src="assets/logo-mark.png" width="1538" height="527" alt="Slebutė">
     <p class="tagline">Kasdienė apranga su charakteriu — dvi parduotuvės Vilniuje, viena filosofija.</p>
     <nav class="hero-nav" aria-label="Greitos nuorodos">
       <a class="btn btn-primary" href="#parduotuves">Parduotuvės</a>
@@ -301,7 +307,7 @@
           <ul class="store-details">
             <li><span class="label">Adresas</span> <span>Šeškinės g. 32, Vilnius, 07157</span></li>
             <li><span class="label">Telefonas</span> <span class="placeholder">[tel. nr.]</span></li>
-            <li><span class="label">Darbo laikas</span> <span class="placeholder">[darbo laikas]</span></li>
+            <li><span class="label">Darbo laikas</span> <span>I–V 10:00–18:00, VI 10:00–15:00</span></li>
           </ul>
         </article>
 
@@ -311,7 +317,7 @@
           <ul class="store-details">
             <li><span class="label">Adresas</span> <span>Laisvės pr. 82, Vilnius, 06128</span></li>
             <li><span class="label">Telefonas</span> <span class="placeholder">[tel. nr.]</span></li>
-            <li><span class="label">Darbo laikas</span> <span class="placeholder">[darbo laikas]</span></li>
+            <li><span class="label">Darbo laikas</span> <span>I–V 10:00–18:00, VI 10:00–15:00</span></li>
           </ul>
         </article>
       </div>
