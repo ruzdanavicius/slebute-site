@@ -69,17 +69,24 @@
 
   .hero {
     background: var(--bg-color);
-    padding: clamp(3.5rem, 10vw, 6rem) 0 clamp(2.5rem, 6vw, 4rem);
-    position: relative;
+    padding: clamp(1.25rem, 4vw, 2rem) 0 clamp(1rem, 3vw, 1.5rem);
+    position: sticky;
+    top: 0;
+    z-index: 100;
     overflow: hidden;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  main section {
+    scroll-margin-top: 320px;
   }
 
   .hero-shape {
     position: absolute;
-    top: -60px;
+    top: -90px;
     right: -60px;
-    width: 220px;
-    height: 220px;
+    width: 180px;
+    height: 180px;
     border-radius: 50%;
     background: var(--accent-tint);
   }
@@ -121,7 +128,7 @@
   }
 
   .hero-nav {
-    margin-top: clamp(2rem, 5vw, 2.75rem);
+    margin-top: clamp(0.85rem, 2.5vw, 1.25rem);
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
@@ -414,7 +421,7 @@
 
   footer {
     border-top: 1px solid var(--border-soft);
-    padding: 1.75rem 0;
+    padding: 1.75rem 0 4rem;
     text-align: center;
     font-size: 0.85rem;
     color: var(--text-muted);
@@ -451,9 +458,9 @@
       <div class="store-grid">
         <article class="store-card">
           <div
-            class="store-gallery is-placeholder"
-            data-photos='[{"src":"assets/placeholder-outside.svg","alt":"Slebutė Šeškinė – lauko vaizdas (nuotrauka bus pridėta)","tag":"Lauko vaizdas"},{"src":"assets/placeholder-inside.svg","alt":"Slebutė Šeškinė – vidaus vaizdas (nuotrauka bus pridėta)","tag":"Parduotuvės vidus"}]'>
-            <img class="store-gallery-img" src="assets/placeholder-outside.svg" alt="Slebutė Šeškinė – lauko vaizdas (nuotrauka bus pridėta)">
+            class="store-gallery"
+            data-photos='[{"src":"assets/seskine-outside.jpg","alt":"Slebutė Šeškinė – parduotuvės įėjimas prekybos centre","tag":"Lauko vaizdas"},{"src":"assets/seskine-inside.jpg","alt":"Slebutė Šeškinė – parduotuvės vidus","tag":"Parduotuvės vidus"}]'>
+            <img class="store-gallery-img" src="assets/seskine-outside.jpg" alt="Slebutė Šeškinė – parduotuvės įėjimas prekybos centre">
             <span class="store-gallery-tag">Lauko vaizdas</span>
             <span class="store-gallery-hint">⟳ Spauskite</span>
             <span class="store-gallery-dots" aria-hidden="true">
