@@ -112,7 +112,7 @@
 
   .hero-kicker {
     width: 100%;
-    margin-top: 0.85rem;
+    margin-top: -0.5rem;
     text-align: center;
     font-weight: 700;
     letter-spacing: 0.18em;
@@ -200,6 +200,21 @@
     color: var(--text-muted);
     min-width: 5.5rem;
     flex-shrink: 0;
+  }
+
+  .hours {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .hours-row {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .hours-day {
+    min-width: 1.6rem;
   }
 
   /* Placeholder values Rimantas still needs to fill in — visually distinct
@@ -376,7 +391,7 @@
           <h3>Šeškinė - Pasažas</h3>
           <ul class="store-details">
             <li><span class="label">Adresas</span> <span>Šeškinės g. 32, Vilnius, 07157</span></li>
-            <li><span class="label">Darbo laikas</span> <span>I–V 10:00–18:00<br>VI 10:00–15:00</span></li>
+            <li><span class="label">Darbo laikas</span> <span class="hours"><span class="hours-row"><span class="hours-day">I–V</span><span>10:00–18:00</span></span><span class="hours-row"><span class="hours-day">VI</span><span>10:00–15:00</span></span></span></li>
           </ul>
 
           <div class="store-media">
@@ -400,7 +415,7 @@
           <h3>Pašilaičiai</h3>
           <ul class="store-details">
             <li><span class="label">Adresas</span> <span>Laisvės pr. 82, Vilnius, 06128</span></li>
-            <li><span class="label">Darbo laikas</span> <span>I–V 10:00–18:00<br>VI 10:00–15:00</span></li>
+            <li><span class="label">Darbo laikas</span> <span class="hours"><span class="hours-row"><span class="hours-day">I–V</span><span>10:00–18:00</span></span><span class="hours-row"><span class="hours-day">VI</span><span>10:00–15:00</span></span></span></li>
           </ul>
 
           <div class="store-media">
