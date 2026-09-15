@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slebutė — drabužių parduotuvė Vilniuje</title>
+<meta name="description" content="Slebutė — drabužių parduotuvė Šeškinėje ir Pašilaičiuose, Vilniuje.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --accent-color: #6B2545;
+    --accent-tint: rgba(107, 37, 69, 0.08);
+    --bg-color: #FAF8F6;
+    --card-bg: #FFFFFF;
+    --text-primary: #241A1F;
+    --text-muted: rgba(36, 22, 30, 0.62);
+    --success-color: #477459;
+    --danger-color: #A23B3B;
+    --warning-bg: #FBF1DF;
+    --placeholder-color: #8A6B4F;
+    --border-soft: rgba(36, 22, 30, 0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background: var(--bg-color);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img, svg { max-width: 100%; display: block; }
+
+  a { color: var(--accent-color); }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 clamp(1.25rem, 4vw, 2.5rem);
+  }
+
+  h1, h2, h3 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  section { padding: clamp(3rem, 7vw, 5rem) 0; }
+
+  .section-heading {
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    margin-bottom: 0.5rem;
+  }
+
+  .section-sub {
+    color: var(--text-muted);
+    font-size: 1rem;
+    max-width: 46ch;
+    margin-bottom: clamp(2rem, 4vw, 2.75rem);
+  }
+
+  /* ---------- Header / hero ---------- */
+
+  .hero {
+    background: var(--bg-color);
+    padding: clamp(3.5rem, 10vw, 6rem) 0 clamp(2.5rem, 6vw, 4rem);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-shape {
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: var(--accent-tint);
+  }
+
+  .brand {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(2.4rem, 7vw, 3.6rem);
+    font-weight: 600;
+    letter-spacing: -0.5px;
+  }
+
+  .brand span { color: var(--accent-color); }
+
+  .tagline {
+    margin-top: 0.75rem;
+    font-size: clamp(1rem, 2.4vw, 1.25rem);
+    color: var(--text-muted);
+    max-width: 40ch;
+  }
+
+  .hero-nav {
+    margin-top: clamp(2rem, 5vw, 2.75rem);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.85rem 1.5rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: 0.2s;
+    border: 1px solid transparent;
+  }
+
+  .btn-primary { background: var(--accent-color); color: #fff; }
+  .btn-primary:hover { background: #5a1e3a; }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-primary);
+    border-color: var(--border-soft);
+  }
+  .btn-ghost:hover { border-color: var(--accent-color); color: var(--accent-color); }
+
+  /* ---------- Stores ---------- */
+
+  .store-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: 1.5rem;
+  }
+
+  .store-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 1.75rem;
+  }
+
+  .store-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .store-district {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    background: var(--accent-tint);
+    border-radius: 6px;
+    padding: 2px 8px;
+    margin-bottom: 0.75rem;
+  }
+
+  .store-details {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    margin-top: 1rem;
+  }
+
+  .store-details li {
+    display: flex;
+    gap: 0.6rem;
+    font-size: 0.92rem;
+  }
+
+  .store-details .label {
+    color: var(--text-muted);
+    min-width: 5.5rem;
+    flex-shrink: 0;
+  }
+
+  /* Placeholder values Rimantas still needs to fill in — visually distinct
+     (dashed underline + muted brand-brown) so they're obviously not real data. */
+  .placeholder {
+    color: var(--placeholder-color);
+    border-bottom: 1px dashed var(--placeholder-color);
+    font-style: italic;
+  }
+
+  /* ---------- Stock grid ---------- */
+
+  .stock-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+    gap: 1.25rem;
+  }
+
+  .stock-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stock-swatch {
+    aspect-ratio: 4 / 3;
+    width: 100%;
+  }
+
+  .stock-body {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .stock-name { font-weight: 600; font-size: 0.98rem; }
+
+  .stock-meta {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+
+  .stock-location {
+    margin-top: 0.4rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--success-color);
+  }
+
+  /* ---------- Contact ---------- */
+
+  .contact-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    padding: clamp(1.75rem, 4vw, 2.5rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 32rem;
+  }
+
+  .contact-row {
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.98rem;
+    align-items: baseline;
+  }
+
+  .contact-row .label {
+    color: var(--text-muted);
+    min-width: 4.5rem;
+    flex-shrink: 0;
+  }
+
+  /* ---------- Footer ---------- */
+
+  footer {
+    border-top: 1px solid var(--border-soft);
+    padding: 1.75rem 0;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 480px) {
+    .contact-row, .store-details li { flex-direction: column; gap: 0.15rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-shape" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="brand">Sleb<span>u</span>tė</p>
+    <p class="tagline">Kasdienė apranga su charakteriu — dvi parduotuvės Vilniuje, viena filosofija.</p>
+    <nav class="hero-nav" aria-label="Greitos nuorodos">
+      <a class="btn btn-primary" href="#parduotuves">Parduotuvės</a>
+      <a class="btn btn-ghost" href="#kontaktai">Kontaktai</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section id="parduotuves">
+    <div class="wrap">
+      <h2 class="section-heading">Parduotuvės</h2>
+      <p class="section-sub">Užsukite į vieną iš mūsų dviejų parduotuvių Vilniuje.</p>
+
+      <div class="store-grid">
+        <article class="store-card">
+          <span class="store-district">Šeškinė</span>
+          <h3>Slebutė Šeškinė</h3>
+          <ul class="store-details">
+            <li><span class="label">Adresas</span> <span class="placeholder">[adresas — įrašyti]</span></li>
+            <li><span class="label">Telefonas</span> <span class="placeholder">[tel. nr.]</span></li>
+            <li><span class="label">Darbo laikas</span> <span class="placeholder">[darbo laikas]</span></li>
+          </ul>
+        </article>
+
+        <article class="store-card">
+          <span class="store-district">Pašilaičiai</span>
+          <h3>Slebutė Pašilaičiai</h3>
+          <ul class="store-details">
+            <li><span class="label">Adresas</span> <span class="placeholder">[adresas — įrašyti]</span></li>
+            <li><span class="label">Telefonas</span> <span class="placeholder">[tel. nr.]</span></li>
+            <li><span class="label">Darbo laikas</span> <span class="placeholder">[darbo laikas]</span></li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="prekes">
+    <div class="wrap">
+      <h2 class="section-heading">Ką rasite dabar</h2>
+      <p class="section-sub">Keletas šiuo metu turimų prekių. Pilnas asortimentas — parduotuvėse.</p>
+
+      <!--
+        Placeholder markup only. The real version will be generated from a
+        small JSON file produced by a periodic Supabase pull (planned
+        separately, not part of this task). Each .stock-card below maps 1:1
+        to a future stock item — keep that shape (swatch / name / meta /
+        location) so a future script can regenerate #stock-grid from JSON
+        without restructuring the CSS.
+      -->
+      <div class="stock-grid" id="stock-grid">
+        <article class="stock-card">
+          <div class="stock-swatch" style="background:#6B2545;" aria-hidden="true"></div>
+          <div class="stock-body">
+            <span class="stock-name placeholder">[Prekės pavadinimas]</span>
+            <span class="stock-meta placeholder">[dydis / spalva]</span>
+            <span class="stock-location">Prieinama: [parduotuvė]</span>
+          </div>
+        </article>
+        <article class="stock-card">
+          <div class="stock-swatch" style="background:#477459;" aria-hidden="true"></div>
+          <div class="stock-body">
+            <span class="stock-name placeholder">[Prekės pavadinimas]</span>
+            <span class="stock-meta placeholder">[dydis / spalva]</span>
+            <span class="stock-location">Prieinama: [parduotuvė]</span>
+          </div>
+        </article>
+        <article class="stock-card">
+          <div class="stock-swatch" style="background:#A23B3B;" aria-hidden="true"></div>
+          <div class="stock-body">
+            <span class="stock-name placeholder">[Prekės pavadinimas]</span>
+            <span class="stock-meta placeholder">[dydis / spalva]</span>
+            <span class="stock-location">Prieinama: [parduotuvė]</span>
+          </div>
+        </article>
+        <article class="stock-card">
+          <div class="stock-swatch" style="background:#8A6B4F;" aria-hidden="true"></div>
+          <div class="stock-body">
+            <span class="stock-name placeholder">[Prekės pavadinimas]</span>
+            <span class="stock-meta placeholder">[dydis / spalva]</span>
+            <span class="stock-location">Prieinama: [parduotuvė]</span>
+          </div>
+        </article>
+        <article class="stock-card">
+          <div class="stock-swatch" style="background:#3E5C76;" aria-hidden="true"></div>
+          <div class="stock-body">
+            <span class="stock-name placeholder">[Prekės pavadinimas]</span>
+            <span class="stock-meta placeholder">[dydis / spalva]</span>
+            <span class="stock-location">Prieinama: [parduotuvė]</span>
+          </div>
+        </article>
+        <article class="stock-card">
+          <div class="stock-swatch" style="background:#B98B4E;" aria-hidden="true"></div>
+          <div class="stock-body">
+            <span class="stock-name placeholder">[Prekės pavadinimas]</span>
+            <span class="stock-meta placeholder">[dydis / spalva]</span>
+            <span class="stock-location">Prieinama: [parduotuvė]</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="kontaktai">
+    <div class="wrap">
+      <h2 class="section-heading">Kontaktai</h2>
+      <p class="section-sub">Turite klausimų? Parašykite mums.</p>
+
+      <div class="contact-card">
+        <div class="contact-row">
+          <span class="label">El. paštas</span>
+          <a class="placeholder" href="mailto:info@slebute.lt">[el. paštas — įrašyti]</a>
+        </div>
+        <div class="contact-row">
+          <span class="label">Telefonas</span>
+          <span class="placeholder">[tel. nr.]</span>
+        </div>
+        <a class="btn btn-primary" href="mailto:info@slebute.lt" style="align-self:flex-start;">Parašyti mums</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span id="footer-year">2026</span> © Slebutė
+  </div>
+</footer>
+
+<script>
+  document.getElementById('footer-year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
