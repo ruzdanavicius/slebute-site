@@ -410,6 +410,68 @@
     color: var(--success-color);
   }
 
+  .stock-stores {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .store-dot-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    cursor: default;
+  }
+
+  .store-dot-wrap.has-stock { cursor: pointer; }
+
+  .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot.in-stock { background: var(--success-color); }
+  .dot.out-of-stock { background: var(--danger-color); }
+
+  .dot-popover {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 0;
+    background: var(--text-primary);
+    color: #fff;
+    font-size: 0.76rem;
+    font-weight: 600;
+    padding: 0.35rem 0.6rem;
+    border-radius: 8px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition: 0.15s;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .store-dot-wrap.has-stock:hover .dot-popover,
+  .store-dot-wrap.popover-open .dot-popover {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .stock-empty {
+    grid-column: 1 / -1;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    padding: 1rem 0;
+  }
+
   /* ---------- Contact ---------- */
 
   .contact-card {
@@ -552,62 +614,16 @@
       <p class="section-sub">Visą asortimentą rasite atvykę į mūsų parduotuves. Laukiame jūsų!</p>
 
       <!--
-        Placeholder markup only. The real version will be generated from a
-        small JSON file produced by a periodic Supabase pull (planned
-        separately, not part of this task). Each .stock-card below maps 1:1
-        to a future stock item — keep that shape (swatch / name / meta /
-        location) so a future script can regenerate #stock-grid from JSON
-        without restructuring the CSS.
+        Populated live from Supabase's rpc_get_featured_products() — see
+        loadFeaturedProducts() near the end of this file. Which ~12 products
+        show rotates daily (set via the "Feature on website" checkbox in
+        SlebuteApp's Manage Catalogue, manager/admin only); whether each is
+        actually in stock right now, and which sizes, is fetched fresh on
+        every page load. Never fewer than zero, never more than what's
+        actually featured — no placeholder filler if fewer than 12.
       -->
       <div class="stock-grid" id="stock-grid">
-        <article class="stock-card">
-          <div class="stock-swatch" style="background:#6B2545;" aria-hidden="true"></div>
-          <div class="stock-body">
-            <span class="stock-name placeholder">[Prekės pavadinimas]</span>
-            <span class="stock-meta placeholder">[dydis / spalva]</span>
-            <span class="stock-location">Prieinama: [parduotuvė]</span>
-          </div>
-        </article>
-        <article class="stock-card">
-          <div class="stock-swatch" style="background:#477459;" aria-hidden="true"></div>
-          <div class="stock-body">
-            <span class="stock-name placeholder">[Prekės pavadinimas]</span>
-            <span class="stock-meta placeholder">[dydis / spalva]</span>
-            <span class="stock-location">Prieinama: [parduotuvė]</span>
-          </div>
-        </article>
-        <article class="stock-card">
-          <div class="stock-swatch" style="background:#A23B3B;" aria-hidden="true"></div>
-          <div class="stock-body">
-            <span class="stock-name placeholder">[Prekės pavadinimas]</span>
-            <span class="stock-meta placeholder">[dydis / spalva]</span>
-            <span class="stock-location">Prieinama: [parduotuvė]</span>
-          </div>
-        </article>
-        <article class="stock-card">
-          <div class="stock-swatch" style="background:#8A6B4F;" aria-hidden="true"></div>
-          <div class="stock-body">
-            <span class="stock-name placeholder">[Prekės pavadinimas]</span>
-            <span class="stock-meta placeholder">[dydis / spalva]</span>
-            <span class="stock-location">Prieinama: [parduotuvė]</span>
-          </div>
-        </article>
-        <article class="stock-card">
-          <div class="stock-swatch" style="background:#3E5C76;" aria-hidden="true"></div>
-          <div class="stock-body">
-            <span class="stock-name placeholder">[Prekės pavadinimas]</span>
-            <span class="stock-meta placeholder">[dydis / spalva]</span>
-            <span class="stock-location">Prieinama: [parduotuvė]</span>
-          </div>
-        </article>
-        <article class="stock-card">
-          <div class="stock-swatch" style="background:#B98B4E;" aria-hidden="true"></div>
-          <div class="stock-body">
-            <span class="stock-name placeholder">[Prekės pavadinimas]</span>
-            <span class="stock-meta placeholder">[dydis / spalva]</span>
-            <span class="stock-location">Prieinama: [parduotuvė]</span>
-          </div>
-        </article>
+        <p class="stock-empty" id="stock-loading">Kraunama...</p>
       </div>
     </div>
   </section>
@@ -672,6 +688,111 @@
       }
     });
   });
+
+  // Live "Sezono naujienos" grid — see rpc_get_featured_products() in
+  // slebute-ops/supabase/migrations. Fetched fresh on every page load so the
+  // in-stock dots are never stale; which products are eligible rotates daily
+  // server-side. The anon key below is safe to embed — RLS on the underlying
+  // tables is the real boundary, and this key is already public in the POS
+  // apps' own source.
+  var SUPABASE_URL = 'https://bpxakmnifkrsbjhiytqf.supabase.co';
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJweGFrbW5pZmtyc2JqaGl5dHFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2MTMzNDgsImV4cCI6MjA4MDE4OTM0OH0.kgfljhRJeLtBIy7U8QU7DEGgRdBwcquH9QVLuhalMEY';
+
+  function renderStockCard(item) {
+    var article = document.createElement('article');
+    article.className = 'stock-card';
+
+    var swatch = document.createElement('div');
+    swatch.className = 'stock-swatch';
+    if (item.image_url) {
+      swatch.style.backgroundImage = 'url(' + item.image_url + ')';
+      swatch.style.backgroundSize = 'cover';
+      swatch.style.backgroundPosition = 'center';
+    } else {
+      swatch.style.background = 'var(--accent-tint)';
+    }
+    swatch.setAttribute('aria-hidden', 'true');
+    article.appendChild(swatch);
+
+    var body = document.createElement('div');
+    body.className = 'stock-body';
+
+    var name = document.createElement('span');
+    name.className = 'stock-name';
+    name.textContent = item.name;
+    body.appendChild(name);
+
+    var stores = document.createElement('div');
+    stores.className = 'stock-stores';
+    (item.stores || []).forEach(function (store) {
+      var wrap = document.createElement('span');
+      wrap.className = 'store-dot-wrap' + (store.in_stock ? ' has-stock' : '');
+
+      var dot = document.createElement('span');
+      dot.className = 'dot ' + (store.in_stock ? 'in-stock' : 'out-of-stock');
+      wrap.appendChild(dot);
+      wrap.appendChild(document.createTextNode(store.store_name));
+
+      if (store.in_stock && store.sizes && store.sizes.length) {
+        var pop = document.createElement('span');
+        pop.className = 'dot-popover';
+        pop.textContent = 'Dydžiai: ' + store.sizes.join(', ');
+        wrap.appendChild(pop);
+
+        // Hover handles desktop via CSS; this click handles touch, where
+        // :hover never fires — same tap-to-reveal convention as the store
+        // photo galleries above.
+        wrap.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var wasOpen = wrap.classList.contains('popover-open');
+          document.querySelectorAll('.store-dot-wrap.popover-open').forEach(function (w) { w.classList.remove('popover-open'); });
+          if (!wasOpen) wrap.classList.add('popover-open');
+        });
+      }
+
+      stores.appendChild(wrap);
+    });
+    body.appendChild(stores);
+
+    article.appendChild(body);
+    return article;
+  }
+
+  async function loadFeaturedProducts() {
+    var grid = document.getElementById('stock-grid');
+    try {
+      var resp = await fetch(SUPABASE_URL + '/rest/v1/rpc/rpc_get_featured_products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: 'Bearer ' + SUPABASE_ANON_KEY
+        },
+        body: '{}'
+      });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      var items = await resp.json();
+
+      grid.innerHTML = '';
+      if (!items || !items.length) {
+        var empty = document.createElement('p');
+        empty.className = 'stock-empty';
+        empty.textContent = 'Naujienos ruošiamos — netrukus pamatysite čia mūsų prekes.';
+        grid.appendChild(empty);
+        return;
+      }
+      items.forEach(function (item) { grid.appendChild(renderStockCard(item)); });
+    } catch (e) {
+      console.error('Featured products load failed:', e);
+      grid.innerHTML = '<p class="stock-empty">Nepavyko įkelti prekių — pabandykite atnaujinti puslapį.</p>';
+    }
+  }
+
+  document.addEventListener('click', function () {
+    document.querySelectorAll('.store-dot-wrap.popover-open').forEach(function (w) { w.classList.remove('popover-open'); });
+  });
+
+  loadFeaturedProducts();
 </script>
 
 </body>
