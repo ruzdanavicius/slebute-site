@@ -165,20 +165,83 @@
 
   .store-card h3 {
     font-size: 1.3rem;
+    margin-top: 1rem;
     margin-bottom: 0.25rem;
   }
 
-  .store-district {
-    display: inline-block;
-    font-size: 0.72rem;
+  .store-gallery {
+    position: relative;
+    margin: -1.75rem -1.75rem 1rem;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: 16px 16px 0 0;
+    cursor: pointer;
+    background: var(--accent-tint);
+    user-select: none;
+  }
+
+  .store-gallery-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .store-gallery-tag {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--accent-color);
-    background: var(--accent-tint);
+    color: #fff;
+    background: rgba(36, 22, 30, 0.55);
     border-radius: 6px;
-    padding: 2px 8px;
-    margin-bottom: 0.75rem;
+    padding: 3px 9px;
+  }
+
+  .store-gallery-hint {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #fff;
+    background: rgba(36, 22, 30, 0.55);
+    border-radius: 999px;
+    padding: 3px 10px;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .store-gallery-dots {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .store-gallery-dots .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.55);
+    transition: 0.2s;
+  }
+
+  .store-gallery-dots .dot.active {
+    background: #fff;
+    width: 16px;
+    border-radius: 3px;
+  }
+
+  .store-gallery.is-placeholder .store-gallery-tag,
+  .store-gallery.is-placeholder .store-gallery-hint {
+    background: rgba(138, 107, 79, 0.75);
   }
 
   .store-details {
@@ -387,7 +450,17 @@
 
       <div class="store-grid">
         <article class="store-card">
-          <span class="store-district">Šeškinė</span>
+          <div
+            class="store-gallery is-placeholder"
+            data-photos='[{"src":"assets/placeholder-outside.svg","alt":"Slebutė Šeškinė – lauko vaizdas (nuotrauka bus pridėta)","tag":"Lauko vaizdas"},{"src":"assets/placeholder-inside.svg","alt":"Slebutė Šeškinė – vidaus vaizdas (nuotrauka bus pridėta)","tag":"Parduotuvės vidus"}]'>
+            <img class="store-gallery-img" src="assets/placeholder-outside.svg" alt="Slebutė Šeškinė – lauko vaizdas (nuotrauka bus pridėta)">
+            <span class="store-gallery-tag">Lauko vaizdas</span>
+            <span class="store-gallery-hint">⟳ Spauskite</span>
+            <span class="store-gallery-dots" aria-hidden="true">
+              <span class="dot active"></span>
+              <span class="dot"></span>
+            </span>
+          </div>
           <h3>Šeškinė - Pasažas</h3>
           <ul class="store-details">
             <li><span class="label">Adresas</span> <span>Šeškinės g. 32, Vilnius, 07157</span></li>
@@ -411,7 +484,17 @@
         </article>
 
         <article class="store-card">
-          <span class="store-district">Pašilaičiai</span>
+          <div
+            class="store-gallery is-placeholder"
+            data-photos='[{"src":"assets/placeholder-outside.svg","alt":"Slebutė Pašilaičiai – lauko vaizdas (nuotrauka bus pridėta)","tag":"Lauko vaizdas"},{"src":"assets/placeholder-inside.svg","alt":"Slebutė Pašilaičiai – vidaus vaizdas (nuotrauka bus pridėta)","tag":"Parduotuvės vidus"}]'>
+            <img class="store-gallery-img" src="assets/placeholder-outside.svg" alt="Slebutė Pašilaičiai – lauko vaizdas (nuotrauka bus pridėta)">
+            <span class="store-gallery-tag">Lauko vaizdas</span>
+            <span class="store-gallery-hint">⟳ Spauskite</span>
+            <span class="store-gallery-dots" aria-hidden="true">
+              <span class="dot active"></span>
+              <span class="dot"></span>
+            </span>
+          </div>
           <h3>Pašilaičiai</h3>
           <ul class="store-details">
             <li><span class="label">Adresas</span> <span>Laisvės pr. 82, Vilnius, 06128</span></li>
@@ -532,6 +615,37 @@
 
 <script>
   document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+  document.querySelectorAll('.store-gallery').forEach(function (gallery) {
+    var photos = JSON.parse(gallery.dataset.photos);
+    var index = 0;
+    var img = gallery.querySelector('.store-gallery-img');
+    var tag = gallery.querySelector('.store-gallery-tag');
+    var dots = gallery.querySelectorAll('.store-gallery-dots .dot');
+
+    function render() {
+      var photo = photos[index];
+      img.src = photo.src;
+      img.alt = photo.alt;
+      if (tag) tag.textContent = photo.tag || '';
+      dots.forEach(function (dot, i) { dot.classList.toggle('active', i === index); });
+    }
+
+    gallery.addEventListener('click', function () {
+      index = (index + 1) % photos.length;
+      render();
+    });
+
+    gallery.setAttribute('role', 'button');
+    gallery.setAttribute('tabindex', '0');
+    gallery.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        index = (index + 1) % photos.length;
+        render();
+      }
+    });
+  });
 </script>
 
 </body>
