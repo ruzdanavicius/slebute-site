@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "slebute-site",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-15",
+  "assets": {
+    "directory": "./",
+    "binding": "ASSETS"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "slebute-contacts",
+      "database_id": "6613a5be-54ac-4d81-b3ee-87e8d0f82d79"
+    }
+  ]
+}

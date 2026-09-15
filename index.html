@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Slebutė — drabužių parduotuvė Vilniuje</title>
+<title>Šlebutė - Moteriškų drabužių parduotuvės Vilniuje</title>
 <meta name="description" content="Slebutė — drabužių parduotuvė Šeškinėje ir Pašilaičiuose, Vilniuje.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -498,6 +498,51 @@
     flex-shrink: 0;
   }
 
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .form-field label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .form-field input,
+  .form-field textarea {
+    font: inherit;
+    font-size: 0.95rem;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    background: var(--bg-color);
+    color: var(--text-primary);
+    resize: vertical;
+  }
+
+  .form-field input:focus,
+  .form-field textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+  }
+
+  .contact-status {
+    font-size: 0.88rem;
+    min-height: 1.2em;
+  }
+
+  .contact-status.ok { color: var(--success-color); }
+  .contact-status.err { color: var(--danger-color); }
+
+  .hp-field {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+  }
+
   /* ---------- Footer ---------- */
 
   footer {
@@ -633,17 +678,23 @@
       <h2 class="section-heading">Kontaktai</h2>
       <p class="section-sub">Turite klausimų? Parašykite mums.</p>
 
-      <div class="contact-card">
-        <div class="contact-row">
-          <span class="label">El. paštas</span>
-          <a class="placeholder" href="mailto:info@slebute.lt">[el. paštas — įrašyti]</a>
+      <form class="contact-card" id="contactForm">
+        <div class="form-field">
+          <label for="cf-name">Vardas</label>
+          <input type="text" id="cf-name" name="name" maxlength="200" required>
         </div>
-        <div class="contact-row">
-          <span class="label">Telefonas</span>
-          <span class="placeholder">[tel. nr.]</span>
+        <div class="form-field">
+          <label for="cf-contact">Tel. nr. arba el. paštas</label>
+          <input type="text" id="cf-contact" name="contact" maxlength="200" required>
         </div>
-        <a class="btn btn-primary" href="mailto:info@slebute.lt" style="align-self:flex-start;">Parašyti mums</a>
-      </div>
+        <div class="form-field">
+          <label for="cf-message">Žinutė</label>
+          <textarea id="cf-message" name="message" rows="4" maxlength="4000" required></textarea>
+        </div>
+        <input type="text" class="hp-field" id="cf-website" name="website" autocomplete="off" tabindex="-1" aria-hidden="true">
+        <button type="submit" class="btn btn-primary" id="cf-submit" style="align-self:flex-start;">Siųsti</button>
+        <p class="contact-status" id="cf-status" role="status" aria-live="polite"></p>
+      </form>
     </div>
   </section>
 
@@ -793,6 +844,48 @@
   });
 
   loadFeaturedProducts();
+
+  // Contact form — posts to /api/contact, handled by this Worker (worker.js),
+  // which writes to the slebute-contacts D1 database. cf-website is a hidden
+  // honeypot: real visitors never see or fill it, so a non-empty value means
+  // a bot filled every field on the page.
+  var contactForm = document.getElementById('contactForm');
+  if (contactForm) {
+    contactForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var status = document.getElementById('cf-status');
+      var submitBtn = document.getElementById('cf-submit');
+      var payload = {
+        name: document.getElementById('cf-name').value.trim(),
+        contact: document.getElementById('cf-contact').value.trim(),
+        message: document.getElementById('cf-message').value.trim(),
+        website: document.getElementById('cf-website').value
+      };
+      status.className = 'contact-status';
+      status.textContent = '';
+      submitBtn.disabled = true;
+      try {
+        var resp = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        var data = await resp.json();
+        if (resp.ok && data.ok) {
+          status.className = 'contact-status ok';
+          status.textContent = 'Ačiū! Žinutė išsiųsta — susisieksime greitai.';
+          contactForm.reset();
+        } else {
+          status.className = 'contact-status err';
+          status.textContent = data.error || 'Nepavyko išsiųsti. Pabandykite dar kartą.';
+        }
+      } catch (err) {
+        status.className = 'contact-status err';
+        status.textContent = 'Nepavyko išsiųsti. Patikrinkite interneto ryšį ir pabandykite dar kartą.';
+      }
+      submitBtn.disabled = false;
+    });
+  }
 </script>
 
 </body>
