@@ -582,12 +582,21 @@
   .store-dot-wrap.has-stock { cursor: pointer; }
 
   .dot {
-    width: 9px;
-    height: 9px;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    line-height: 1;
+    color: #fff;
   }
 
+  /* Status is never color-only: the glyph inside the dot (✓/✕) carries the
+     same meaning for colorblind sighted users; aria-label on the wrapping
+     span (below) carries it for screen readers. */
   .dot.in-stock { background: var(--success-color); }
   .dot.out-of-stock { background: var(--danger-color); }
 
@@ -986,9 +995,12 @@
     (item.stores || []).forEach(function (store) {
       var wrap = document.createElement('span');
       wrap.className = 'store-dot-wrap' + (store.in_stock ? ' has-stock' : '');
+      wrap.setAttribute('aria-label', store.store_name + ': ' + (store.in_stock ? 'yra' : 'nėra'));
 
       var dot = document.createElement('span');
       dot.className = 'dot ' + (store.in_stock ? 'in-stock' : 'out-of-stock');
+      dot.setAttribute('aria-hidden', 'true');
+      dot.textContent = store.in_stock ? '✓' : '✕';
       wrap.appendChild(dot);
       wrap.appendChild(document.createTextNode(store.store_name));
 
@@ -1017,10 +1029,15 @@
     return article;
   }
 
+  var FEATURED_FETCH_TIMEOUT_MS = 9000;
+
   async function loadFeaturedProducts() {
     var grid = document.getElementById('stock-grid');
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function () { controller.abort(); }, FEATURED_FETCH_TIMEOUT_MS);
     try {
-      var resp = await fetch('/api/featured');
+      var resp = await fetch('/api/featured', { signal: controller.signal });
+      clearTimeout(timeoutId);
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       var items = await resp.json();
 
@@ -1034,9 +1051,30 @@
       }
       items.forEach(function (item) { grid.appendChild(renderStockCard(item)); });
     } catch (e) {
+      clearTimeout(timeoutId);
       console.error('Featured products load failed:', e);
-      grid.innerHTML = '<p class="stock-empty">Nepavyko įkelti prekių — pabandykite atnaujinti puslapį.</p>';
+      renderFeaturedLoadError(grid);
     }
+  }
+
+  // A hung connection previously left "Kraunama..." on screen forever with
+  // no failure ever surfaced (no AbortController on the fetch) and the only
+  // recourse was reloading the whole page. Now: a bounded timeout plus a
+  // same-page retry that just re-runs the load.
+  function renderFeaturedLoadError(grid) {
+    grid.innerHTML = '';
+    var msg = document.createElement('p');
+    msg.className = 'stock-empty';
+    msg.textContent = 'Nepavyko įkelti prekių.';
+    grid.appendChild(msg);
+
+    var retry = document.createElement('button');
+    retry.type = 'button';
+    retry.className = 'btn btn-ghost';
+    retry.style.marginTop = '0.5rem';
+    retry.textContent = 'Bandyti dar kartą';
+    retry.addEventListener('click', function () { loadFeaturedProducts(); });
+    grid.appendChild(retry);
   }
 
   document.addEventListener('click', function () {
