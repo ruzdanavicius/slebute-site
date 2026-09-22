@@ -48,7 +48,30 @@ async function handleContact(request, env) {
     return jsonResponse({ ok: false, error: 'Nepavyko išsaugoti. Bandykite vėliau.' }, 500);
   }
 
+  // The D1 row above is the durable record of this submission — a failed
+  // notification email must never fail the customer's submission, so this
+  // is best-effort and swallows its own errors.
+  try {
+    await notifyNewContact(env, name, contact, message);
+  } catch (e) {
+    console.error('Contact notification email failed:', e);
+  }
+
   return jsonResponse({ ok: true });
+}
+
+// Requires the slebute.lt domain to be onboarded to Cloudflare Email
+// Service (adds SPF/DKIM records) and uzdanavicius@gmail.com verified as a
+// destination address — see the send_email binding in wrangler.jsonc.
+// Until both are done, env.EMAIL.send() will reject and this is silently
+// logged, not surfaced to the customer.
+async function notifyNewContact(env, name, contact, message) {
+  await env.EMAIL.send({
+    from: 'kontaktai@slebute.lt',
+    to: 'uzdanavicius@gmail.com',
+    subject: 'Nauja užklausa iš slebute.lt — ' + name,
+    text: 'Vardas: ' + name + '\nKontaktas: ' + contact + '\n\nŽinutė:\n' + message
+  });
 }
 
 function jsonResponse(data, status) {
