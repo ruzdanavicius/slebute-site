@@ -893,13 +893,11 @@
   });
 
   // Live "Sezono naujienos" grid — see rpc_get_featured_products() in
-  // slebute-ops/supabase/migrations. Fetched fresh on every page load so the
-  // in-stock dots are never stale; which products are eligible rotates daily
-  // server-side. The anon key below is safe to embed — RLS on the underlying
-  // tables is the real boundary, and this key is already public in the POS
-  // apps' own source.
-  var SUPABASE_URL = 'https://bpxakmnifkrsbjhiytqf.supabase.co';
-  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJweGFrbW5pZmtyc2JqaGl5dHFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2MTMzNDgsImV4cCI6MjA4MDE4OTM0OH0.kgfljhRJeLtBIy7U8QU7DEGgRdBwcquH9QVLuhalMEY';
+  // slebute-ops/supabase/migrations. Which products are eligible rotates
+  // daily server-side. Fetched via this Worker's own /api/featured route
+  // (worker.js), which holds a short edge cache in front of Supabase rather
+  // than this page hitting the production POS database directly on every
+  // load — see FEATURED_CACHE_SECONDS in worker.js.
 
   // Builds the product image area. Already supports N images (dots + click
   // to advance + touch swipe) even though every product today has at most
@@ -1022,15 +1020,7 @@
   async function loadFeaturedProducts() {
     var grid = document.getElementById('stock-grid');
     try {
-      var resp = await fetch(SUPABASE_URL + '/rest/v1/rpc/rpc_get_featured_products', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          apikey: SUPABASE_ANON_KEY,
-          Authorization: 'Bearer ' + SUPABASE_ANON_KEY
-        },
-        body: '{}'
-      });
+      var resp = await fetch('/api/featured');
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       var items = await resp.json();
 
