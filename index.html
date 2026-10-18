@@ -74,6 +74,15 @@
           "opens": "10:00",
           "closes": "15:00"
         }
+      ],
+      "specialOpeningHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "opens": "00:00",
+          "closes": "00:00",
+          "validFrom": "2026-10-21",
+          "validThrough": "2026-12-18"
+        }
       ]
     },
     {
@@ -377,6 +386,59 @@
   .store-gallery.is-placeholder .store-gallery-tag,
   .store-gallery.is-placeholder .store-gallery-hint {
     background: rgba(138, 107, 79, 0.75);
+  }
+
+  /* Temporary closure (Šeškinė, 2026-10-21 → 2026-12-18). The card carries
+     .is-closed in the markup; the script at the bottom removes it once the
+     closure is over, which brings the hours and map back automatically. */
+  .store-card.is-closed .store-gallery-img {
+    filter: saturate(0.4) brightness(1.07) contrast(0.9);
+  }
+
+  .store-card.is-closed .store-gallery-tag {
+    background: rgba(107, 37, 69, 0.9);
+  }
+
+  .store-card.is-closed .closable,
+  .store-card:not(.is-closed) .store-closure {
+    display: none;
+  }
+
+  .store-closure {
+    margin-top: 1rem;
+    background: var(--warning-bg);
+    border: 1px solid #E8D3A6;
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+  }
+
+  .store-closure-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    margin-bottom: 0.2rem;
+  }
+
+  .store-closure-dates {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 0.45rem;
+  }
+
+  .store-closure p {
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+
+  .store-closure p + p {
+    margin-top: 0.5rem;
+  }
+
+  .store-closure a {
+    color: var(--accent-color);
+    font-weight: 600;
   }
 
   .store-details {
@@ -743,12 +805,12 @@
       <p class="section-sub">Užsukite į mūsų parduotuves Vilniuje</p>
 
       <div class="store-grid">
-        <article class="store-card">
+        <article class="store-card is-closed" id="seskine-card">
           <div
             class="store-gallery"
             data-photos='[{"src":"assets/seskine-outside.jpg","alt":"Slebutė Šeškinė – parduotuvės įėjimas prekybos centre","tag":"IŠORĖ"},{"src":"assets/seskine-inside.jpg","alt":"Slebutė Šeškinė – parduotuvės vidus","tag":"VIDUS"}]'>
             <img class="store-gallery-img" src="assets/seskine-outside.jpg" alt="Slebutė Šeškinė – parduotuvės įėjimas prekybos centre">
-            <span class="store-gallery-tag">IŠORĖ</span>
+            <span class="store-gallery-tag">Laikinai uždaryta</span>
             <span class="store-gallery-hint">⟳ Spauskite</span>
             <span class="store-gallery-dots" aria-hidden="true">
               <span class="dot active"></span>
@@ -758,10 +820,17 @@
           <h3>Šeškinė - Pasažas</h3>
           <ul class="store-details">
             <li><span class="label">Adresas</span> <span>Šeškinės g. 32, Vilnius, 07157</span></li>
-            <li><span class="label">Darbo laikas</span> <span class="hours"><span class="hours-row"><span class="hours-day">I–V</span><span>10:00–18:30</span></span><span class="hours-row"><span class="hours-day">VI</span><span>10:00–15:00</span></span><span class="hours-row"><span class="hours-day">VII</span><span>Nedirbame</span></span></span></li>
+            <li class="closable"><span class="label">Darbo laikas</span> <span class="hours"><span class="hours-row"><span class="hours-day">I–V</span><span>10:00–18:30</span></span><span class="hours-row"><span class="hours-day">VI</span><span>10:00–15:00</span></span><span class="hours-row"><span class="hours-day">VII</span><span>Nedirbame</span></span></span></li>
           </ul>
 
-          <div class="store-media">
+          <div class="store-closure" role="note">
+            <div class="store-closure-label">Laikinai uždaryta</div>
+            <div class="store-closure-dates">2026 m. spalio 21 d. – gruodžio 18 d.</div>
+            <p>Dėl Šeškinės prekybos centro ir pasažo remonto darbų mūsų parduotuvė šiuo laikotarpiu bus uždaryta. Atsiprašome už nepatogumus.</p>
+            <p>Maloniai kviečiame apsilankyti mūsų parduotuvėje <a href="#pasilaiciai-card">Pašilaičiuose, Laisvės pr. 82</a>.</p>
+          </div>
+
+          <div class="store-media closable">
             <div class="store-map">
               <iframe
                 src="https://www.google.com/maps?q=54.715447,25.245241&hl=lt&z=16&output=embed"
@@ -777,7 +846,7 @@
           </div>
         </article>
 
-        <article class="store-card">
+        <article class="store-card" id="pasilaiciai-card">
           <div
             class="store-gallery"
             data-photos='[{"src":"assets/pasilaiciai-outside.jpg","alt":"Slebutė Pašilaičiai – parduotuvės įėjimas prekybos centre","tag":"IŠORĖ"},{"src":"assets/pasilaiciai-inside.jpg","alt":"Slebutė Pašilaičiai – parduotuvės vidus","tag":"VIDUS"}]'>
@@ -869,6 +938,22 @@
 
 <script>
   document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+  // Šeškinė temporary closure ends after 2026-12-18 (Vilnius time, UTC+2 in
+  // winter). After that the card drops .is-closed and shows hours + map again.
+  (function () {
+    var card = document.getElementById('seskine-card');
+    if (!card) return;
+    var gal = card.querySelector('.store-gallery');
+    var photos = JSON.parse(gal.dataset.photos);
+    if (Date.now() >= Date.parse('2026-12-19T00:00:00+02:00')) {
+      card.classList.remove('is-closed');
+      gal.querySelector('.store-gallery-tag').textContent = photos[0].tag;
+    } else {
+      photos.forEach(function (p) { p.tag = 'Laikinai uždaryta'; });
+      gal.dataset.photos = JSON.stringify(photos);
+    }
+  })();
 
   document.querySelectorAll('.store-gallery').forEach(function (gallery) {
     var photos = JSON.parse(gallery.dataset.photos);
