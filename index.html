@@ -245,6 +245,45 @@
     color: var(--accent-color);
   }
 
+  .hero .wrap { position: relative; container-type: inline-size; }
+
+  .hero-social {
+    position: absolute;
+    /* Centre sits about 60% down the logo, level with the script wordmark,
+       so it reads as part of the brand row rather than its own line. */
+    bottom: 1.6rem;
+    right: clamp(1.25rem, 4vw, 2.5rem);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .hero-social:hover,
+  .hero-social:focus-visible { color: var(--accent-color); }
+
+  .hero-social-text { display: none; transition: transform 0.2s; }
+
+  .hero-social:hover .hero-social-text,
+  .hero-social:focus-visible .hero-social-text { transform: translateX(-3px); }
+
+  .hero-social:focus-visible { outline: 2px solid var(--accent-color); outline-offset: 4px; border-radius: 4px; }
+
+  .hero-social-icon { width: 1.75rem; height: 1.75rem; flex: none; display: block; opacity: 0.9; transition: opacity 0.2s; }
+
+  .hero-social:hover .hero-social-icon,
+  .hero-social:focus-visible .hero-social-icon { opacity: 1; }
+
+  /* Narrow screens: icon only, the logo needs the room. */
+  @media (min-width: 640px) {
+    .hero-social-text { display: inline-block; }
+    .hero-social-icon { width: 2rem; height: 2rem; }
+  }
+
   .hero-nav {
     /* Hidden for now while the site is small - bring back once there's
        enough content to justify in-page navigation. */
@@ -809,6 +848,10 @@
 <header class="hero">
   <div class="hero-shape" aria-hidden="true"></div>
   <div class="wrap">
+    <a class="hero-social" href="https://www.facebook.com/slebute" target="_blank" rel="noopener" aria-label="Apsilankykite mūsų Facebook puslapyje" title="Apsilankykite mūsų Facebook puslapyje">
+      <img class="hero-social-icon" src="assets/fb-dress.png" width="96" height="96" alt="" aria-hidden="true">
+      <span class="hero-social-text">Apsilankykite mūsų Facebook puslapyje</span>
+    </a>
     <div class="hero-brand">
       <img class="brand-logo" src="assets/logo-mark.png" width="1538" height="527" alt="Slebutė">
       <p class="hero-kicker">MOTERIŠKI DRABUŽIAI</p>
