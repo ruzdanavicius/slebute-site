@@ -345,20 +345,40 @@
     padding: 3px 9px;
   }
 
-  .store-gallery-hint {
+  .store-gallery-arrow {
     position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    font-size: 0.68rem;
-    font-weight: 600;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(36, 22, 30, 0.5);
     color: #fff;
-    background: rgba(36, 22, 30, 0.55);
-    border-radius: 999px;
-    padding: 3px 10px;
     display: flex;
     align-items: center;
-    gap: 0.3rem;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
   }
+
+  .store-gallery-arrow:hover {
+    background: rgba(36, 22, 30, 0.78);
+  }
+
+  .store-gallery-arrow:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+
+  .store-gallery-arrow svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .store-gallery-arrow.prev { left: 0.6rem; }
+  .store-gallery-arrow.next { right: 0.6rem; }
 
   .store-gallery-dots {
     position: absolute;
@@ -367,6 +387,9 @@
     transform: translateX(-50%);
     display: flex;
     gap: 0.4rem;
+    padding: 5px 8px;
+    border-radius: 999px;
+    background: rgba(36, 22, 30, 0.35);
   }
 
   .store-gallery-dots .dot {
@@ -383,8 +406,7 @@
     border-radius: 3px;
   }
 
-  .store-gallery.is-placeholder .store-gallery-tag,
-  .store-gallery.is-placeholder .store-gallery-hint {
+  .store-gallery.is-placeholder .store-gallery-tag {
     background: rgba(138, 107, 79, 0.75);
   }
 
@@ -399,6 +421,7 @@
     background: rgba(107, 37, 69, 0.9);
   }
 
+  .store-card:not(.is-closed) .store-gallery-tag,
   .store-card.is-closed .closable,
   .store-card:not(.is-closed) .store-closure {
     display: none;
@@ -808,14 +831,12 @@
         <article class="store-card is-closed" id="seskine-card">
           <div
             class="store-gallery"
-            data-photos='[{"src":"assets/seskine-outside.jpg","alt":"Slebutė Šeškinė – parduotuvės įėjimas prekybos centre","tag":"IŠORĖ"},{"src":"assets/seskine-inside.jpg","alt":"Slebutė Šeškinė – parduotuvės vidus","tag":"VIDUS"}]'>
+            role="group"
+            aria-roledescription="carousel"
+            aria-label="Šeškinė – nuotraukos"
+            data-photos='[{"src":"assets/seskine-outside.jpg","alt":"Slebutė Šeškinė – parduotuvės įėjimas prekybos centre"},{"src":"assets/seskine-inside.jpg","alt":"Slebutė Šeškinė – parduotuvės vidus"},{"src":"assets/seskine-3.jpg","alt":"Šlebutė Šeškinė – pasažo įėjimas iš lauko"},{"src":"assets/seskine-4.jpg","alt":"Šlebutė Šeškinė – parduotuvė pasažo koridoriuje"},{"src":"assets/seskine-5.jpg","alt":"Šlebutė Šeškinė – parduotuvės vitrina ir įėjimas"},{"src":"assets/seskine-6.jpg","alt":"Šlebutė Šeškinė – parduotuvės vidus ir kasa"},{"src":"assets/seskine-7.jpg","alt":"Šlebutė Šeškinė – parduotuvės vidus ir matavimosi kabinos"}]'>
             <img class="store-gallery-img" src="assets/seskine-outside.jpg" alt="Slebutė Šeškinė – parduotuvės įėjimas prekybos centre">
             <span class="store-gallery-tag">Laikinai uždaryta</span>
-            <span class="store-gallery-hint">⟳ Spauskite</span>
-            <span class="store-gallery-dots" aria-hidden="true">
-              <span class="dot active"></span>
-              <span class="dot"></span>
-            </span>
           </div>
           <h3>Šeškinė - Pasažas</h3>
           <ul class="store-details">
@@ -849,14 +870,11 @@
         <article class="store-card" id="pasilaiciai-card">
           <div
             class="store-gallery"
-            data-photos='[{"src":"assets/pasilaiciai-outside.jpg","alt":"Slebutė Pašilaičiai – parduotuvės įėjimas prekybos centre","tag":"IŠORĖ"},{"src":"assets/pasilaiciai-inside.jpg","alt":"Slebutė Pašilaičiai – parduotuvės vidus","tag":"VIDUS"}]'>
+            role="group"
+            aria-roledescription="carousel"
+            aria-label="Pašilaičiai – nuotraukos"
+            data-photos='[{"src":"assets/pasilaiciai-outside.jpg","alt":"Slebutė Pašilaičiai – parduotuvės įėjimas prekybos centre"},{"src":"assets/pasilaiciai-inside.jpg","alt":"Slebutė Pašilaičiai – parduotuvės vidus"},{"src":"assets/pasilaiciai-3.jpg","alt":"Šlebutė Pašilaičiai – parduotuvės vidus ir drabužių stovai"},{"src":"assets/pasilaiciai-4.jpg","alt":"Šlebutė Pašilaičiai – parduotuvės salė"}]'>
             <img class="store-gallery-img" src="assets/pasilaiciai-outside.jpg" alt="Slebutė Pašilaičiai – parduotuvės įėjimas prekybos centre">
-            <span class="store-gallery-tag">IŠORĖ</span>
-            <span class="store-gallery-hint">⟳ Spauskite</span>
-            <span class="store-gallery-dots" aria-hidden="true">
-              <span class="dot active"></span>
-              <span class="dot"></span>
-            </span>
           </div>
           <h3>Pašilaičiai</h3>
           <ul class="store-details">
@@ -943,46 +961,73 @@
   // winter). After that the card drops .is-closed and shows hours + map again.
   (function () {
     var card = document.getElementById('seskine-card');
-    if (!card) return;
-    var gal = card.querySelector('.store-gallery');
-    var photos = JSON.parse(gal.dataset.photos);
-    if (Date.now() >= Date.parse('2026-12-19T00:00:00+02:00')) {
+    if (card && Date.now() >= Date.parse('2026-12-19T00:00:00+02:00')) {
       card.classList.remove('is-closed');
-      gal.querySelector('.store-gallery-tag').textContent = photos[0].tag;
-    } else {
-      photos.forEach(function (p) { p.tag = 'Laikinai uždaryta'; });
-      gal.dataset.photos = JSON.stringify(photos);
     }
   })();
 
+  // Store photo galleries: tap/click the photo or the arrows for next/previous,
+  // swipe on touch screens, ArrowLeft/ArrowRight when the gallery has focus.
+  var CHEVRON_PREV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
+  var CHEVRON_NEXT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
+
   document.querySelectorAll('.store-gallery').forEach(function (gallery) {
     var photos = JSON.parse(gallery.dataset.photos);
+    if (photos.length < 2) return;
     var index = 0;
     var img = gallery.querySelector('.store-gallery-img');
-    var tag = gallery.querySelector('.store-gallery-tag');
-    var dots = gallery.querySelectorAll('.store-gallery-dots .dot');
 
-    function render() {
-      var photo = photos[index];
-      img.src = photo.src;
-      img.alt = photo.alt;
-      if (tag) tag.textContent = photo.tag || '';
-      dots.forEach(function (dot, i) { dot.classList.toggle('active', i === index); });
-    }
-
-    gallery.addEventListener('click', function () {
-      index = (index + 1) % photos.length;
-      render();
+    var dotsWrap = document.createElement('span');
+    dotsWrap.className = 'store-gallery-dots';
+    dotsWrap.setAttribute('aria-hidden', 'true');
+    var dots = photos.map(function () {
+      var dot = document.createElement('span');
+      dot.className = 'dot';
+      dotsWrap.appendChild(dot);
+      return dot;
     });
 
-    gallery.setAttribute('role', 'button');
+    function show(i) {
+      index = (i + photos.length) % photos.length;
+      img.src = photos[index].src;
+      img.alt = photos[index].alt;
+      dots.forEach(function (dot, d) { dot.classList.toggle('active', d === index); });
+      new Image().src = photos[(index + 1) % photos.length].src;
+    }
+
+    function addArrow(dir, label, icon) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'store-gallery-arrow ' + dir;
+      btn.setAttribute('aria-label', label);
+      btn.innerHTML = icon;
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        show(index + (dir === 'next' ? 1 : -1));
+      });
+      gallery.appendChild(btn);
+    }
+
+    addArrow('prev', 'Ankstesnė nuotrauka', CHEVRON_PREV);
+    addArrow('next', 'Kita nuotrauka', CHEVRON_NEXT);
+    gallery.appendChild(dotsWrap);
+    show(0);
+
+    gallery.addEventListener('click', function () { show(index + 1); });
+
     gallery.setAttribute('tabindex', '0');
     gallery.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        index = (index + 1) % photos.length;
-        render();
-      }
+      if (e.key === 'ArrowRight') { e.preventDefault(); show(index + 1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); show(index - 1); }
+    });
+
+    var touchX = null;
+    gallery.addEventListener('touchstart', function (e) { touchX = e.touches[0].clientX; }, { passive: true });
+    gallery.addEventListener('touchend', function (e) {
+      if (touchX === null) return;
+      var dx = e.changedTouches[0].clientX - touchX;
+      touchX = null;
+      if (Math.abs(dx) > 40) { e.preventDefault(); show(index + (dx < 0 ? 1 : -1)); }
     });
   });
 
