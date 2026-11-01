@@ -800,7 +800,7 @@
     cursor: default;
   }
 
-  .store-dot-wrap.has-stock { cursor: pointer; }
+  .store-dot-wrap.has-popover { cursor: pointer; }
 
   .dot {
     width: 14px;
@@ -831,7 +831,8 @@
     font-weight: 600;
     padding: 0.35rem 0.6rem;
     border-radius: 8px;
-    white-space: nowrap;
+    width: max-content;
+    max-width: min(17rem, 75vw);
     opacity: 0;
     visibility: hidden;
     transform: translateY(4px);
@@ -840,7 +841,7 @@
     z-index: 5;
   }
 
-  .store-dot-wrap.has-stock:hover .dot-popover,
+  .store-dot-wrap.has-popover:hover .dot-popover,
   .store-dot-wrap.popover-open .dot-popover {
     opacity: 1;
     visibility: visible;
@@ -1332,6 +1333,13 @@
     return swatch;
   }
 
+  // "Šiuo metu <vietininkas> prekės neturime" needs the locative case of the
+  // shop name; unknown names fall back to "<name> parduotuvėje".
+  var STORE_LOCATIVE = {
+    'Šeškinė': 'Šeškinėje',
+    'Pašilaičiai': 'Pašilaičiuose'
+  };
+
   function renderStockCard(item) {
     var article = document.createElement('article');
     article.className = 'stock-card';
@@ -1374,10 +1382,18 @@
       wrap.appendChild(dot);
       wrap.appendChild(document.createTextNode(store.store_name));
 
-      if (store.in_stock && store.sizes && store.sizes.length) {
+      var popText = null;
+      if (!store.in_stock) {
+        popText = 'Šiuo metu ' + (STORE_LOCATIVE[store.store_name] || store.store_name + ' parduotuvėje') + ' prekės neturime';
+      } else if (store.sizes && store.sizes.length) {
+        popText = 'Turimi dydžiai: ' + store.sizes.join(', ');
+      }
+
+      if (popText) {
+        wrap.classList.add('has-popover');
         var pop = document.createElement('span');
         pop.className = 'dot-popover';
-        pop.textContent = 'Dydžiai: ' + store.sizes.join(', ');
+        pop.textContent = popText;
         wrap.appendChild(pop);
 
         // Hover handles desktop via CSS; this click handles touch, where
