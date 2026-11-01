@@ -774,6 +774,15 @@
     color: var(--success-color);
   }
 
+  .stock-label {
+    margin-top: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .stock-label + .stock-stores { margin-top: 0.1rem; }
+
   .stock-stores {
     margin-top: 0.5rem;
     display: flex;
@@ -1338,9 +1347,22 @@
     name.textContent = item.name;
     body.appendChild(name);
 
+    // "Atvykstančios prekės" is the POS's virtual incoming-goods store, not a
+    // shop customers can visit — only real shops are listed here.
+    var shops = (item.stores || []).filter(function (store) {
+      return store.store_name !== 'Atvykstančios prekės';
+    });
+
+    if (shops.length) {
+      var stockLabel = document.createElement('span');
+      stockLabel.className = 'stock-label';
+      stockLabel.textContent = 'Esami prekių likučiai:';
+      body.appendChild(stockLabel);
+    }
+
     var stores = document.createElement('div');
     stores.className = 'stock-stores';
-    (item.stores || []).forEach(function (store) {
+    shops.forEach(function (store) {
       var wrap = document.createElement('span');
       wrap.className = 'store-dot-wrap' + (store.in_stock ? ' has-stock' : '');
       wrap.setAttribute('aria-label', store.store_name + ': ' + (store.in_stock ? 'yra' : 'nėra'));
