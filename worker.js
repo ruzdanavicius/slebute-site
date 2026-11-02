@@ -187,16 +187,18 @@ async function handleContact(request, env) {
   // notification email must never fail the customer's submission, so this
   // is best-effort and swallows its own errors.
   var notified = 'failed';
+  var notifyError = '';
   try {
     notified = await notifyNewContact(env, name, contact, message);
   } catch (e) {
     console.error('Contact notification email failed:', e);
+    notifyError = String((e && e.message) || e).replace(/[\r\n]+/g, ' ').slice(0, 300);
   }
 
   // X-Notify tells whoever tests the form (curl / devtools) whether the email went out; the customer-facing body is unchanged.
   return new Response(JSON.stringify({ ok: true }), {
     status: 200,
-    headers: { 'Content-Type': 'application/json', 'X-Notify': notified }
+    headers: Object.assign({ 'Content-Type': 'application/json', 'X-Notify': notified }, notifyError ? { 'X-Notify-Error': notifyError } : {})
   });
 }
 
@@ -239,13 +241,19 @@ async function notifyNewContact(env, name, contact, message) {
   const subject = (isReservation ? 'Rezervacija pasimatuoti' : 'Nauja užklausa') + ' iš slebute.lt — ' + name.slice(0, 40);
   const text = 'Vardas: ' + name + '\nKontaktas: ' + contact + '\n\nŽinutė:\n' + message;
 
+  let routingError = '';
   try {
     await env.EMAIL.send(new EmailMessage(NOTIFY_FROM, NOTIFY_TO, buildMime(subject, text)));
     return 'routing';
   } catch (e) {
+    routingError = String((e && e.message) || e);
     console.error('Email Routing style send failed, trying Email Service style:', e);
   }
-  await env.EMAIL.send({ from: NOTIFY_FROM, to: NOTIFY_TO, subject: subject, text: text });
+  try {
+    await env.EMAIL.send({ from: NOTIFY_FROM, to: NOTIFY_TO, subject: subject, text: text });
+  } catch (e2) {
+    throw new Error('routing: ' + routingError + ' | service: ' + String((e2 && e2.message) || e2));
+  }
   return 'service';
 }
 
