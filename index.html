@@ -1349,53 +1349,93 @@
   // Photos sit side by side; changing photo translates the track, so the old
   // one slides out while the new one slides in. On touch screens the track
   // follows the finger and snaps to the next/previous photo on release.
-  // Does not wrap: the first/last photo are the ends (what phone galleries do).
+  // It wraps: after the last photo comes the first (and the other way round),
+  // still sliding in the same direction. To make that seamless the track
+  // holds a copy of the last photo before the first and a copy of the first
+  // after the last; once a slide onto a copy finishes, the track jumps
+  // (unseen) to the real photo.
   function createSlider(images, altBase, opts) {
     opts = opts || {};
+    var n = images.length;
+    var multi = n > 1;
     var el = document.createElement('div');
     el.className = 'slider';
     var track = document.createElement('div');
     track.className = 'slider-track';
     el.appendChild(track);
 
-    images.forEach(function (src, i) {
+    function addSlide(src, label, isCopy) {
       var slide = document.createElement('div');
       slide.className = 'slide';
       var img = document.createElement('img');
       img.src = src;
-      img.alt = opts.numbered && images.length > 1 ? altBase + ' (' + (i + 1) + '/' + images.length + ')' : (opts.numbered ? altBase : '');
+      img.alt = isCopy ? '' : label;
       img.draggable = false;
-      if (!opts.eager && i > 0) img.loading = 'lazy';
+      if (!opts.eager) img.loading = 'lazy';
+      if (isCopy) slide.setAttribute('aria-hidden', 'true');
       slide.appendChild(img);
       track.appendChild(slide);
-    });
+    }
+    function labelFor(i) {
+      if (!opts.numbered) return '';
+      return multi ? altBase + ' (' + (i + 1) + '/' + n + ')' : altBase;
+    }
 
-    var last = images.length - 1;
-    var index = 0;
+    if (multi) addSlide(images[n - 1], '', true);
+    images.forEach(function (src, i) { addSlide(src, labelFor(i), false); });
+    if (multi) addSlide(images[0], '', true);
+
+    var offset = multi ? 1 : 0; // slides before the first real photo
+    var index = 0;              // real photo index, 0..n-1
+    var pos = 0;                // track position; can sit on a copy mid-slide
+    var settleTimer = null;
     var lastSwipeAt = 0;
 
     function place(dx) {
-      track.style.transform = 'translateX(calc(' + (-index * 100) + '% + ' + (dx || 0) + 'px))';
+      track.style.transform = 'translateX(calc(' + (-(pos + offset) * 100) + '% + ' + (dx || 0) + 'px))';
     }
 
-    function go(i, instant) {
-      i = Math.max(0, Math.min(last, i));
-      var changed = i !== index;
-      index = i;
-      if (instant) {
+    // If the track is resting on a copy, jump to the matching real photo.
+    function settle() {
+      clearTimeout(settleTimer);
+      if (pos < 0 || pos > n - 1) {
+        pos = index;
         track.classList.add('dragging');
         place(0);
-        void track.offsetWidth; // flush so the next change animates again
+        void track.offsetWidth; // flush so the next slide animates again
+        track.classList.remove('dragging');
+      }
+    }
+
+    track.addEventListener('transitionend', function (e) {
+      if (e.target === track) settle();
+    });
+
+    // i may be -1 or n: one step past either end, which wraps around.
+    function go(i, instant) {
+      if (!multi) return;
+      settle(); // a previous wrap may still be mid-slide
+      var wrapped = ((i % n) + n) % n;
+      var changed = wrapped !== index;
+      pos = i;
+      index = wrapped;
+      if (instant) {
+        pos = index;
+        track.classList.add('dragging');
+        place(0);
+        void track.offsetWidth;
         track.classList.remove('dragging');
       } else {
         place(0);
+        if (pos !== index) settleTimer = setTimeout(settle, 450); // no transitionend (e.g. reduced motion)
       }
       if (changed && opts.onChange) opts.onChange(index);
     }
 
     var startX = null, startY = null, axis = null;
     el.addEventListener('touchstart', function (e) {
-      if (last < 1 || e.touches.length !== 1) { startX = null; return; }
+      if (!multi || e.touches.length !== 1) { startX = null; return; }
+      settle();
       startX = e.touches[0].clientX;
       startY = e.touches[0].clientY;
       axis = null;
@@ -1410,8 +1450,6 @@
         if (axis === 'x') track.classList.add('dragging');
       }
       if (axis !== 'x') return;
-      // Rubber-band at either end instead of dragging into empty space.
-      if ((index === 0 && dx > 0) || (index === last && dx < 0)) dx *= 0.3;
       place(dx);
     }, { passive: true });
 
@@ -1437,9 +1475,11 @@
       if (opts.onTap) opts.onTap(index, e);
     });
 
+    place(0);
+
     return {
       el: el,
-      count: images.length,
+      count: n,
       getIndex: function () { return index; },
       go: go,
       wasSwiped: function () { return Date.now() - lastSwipeAt < 400; }
@@ -1481,8 +1521,6 @@
       Array.prototype.forEach.call(dotsWrap.children, function (d, k) {
         d.classList.toggle('active', k === i);
       });
-      prevBtn.hidden = i === 0;
-      nextBtn.hidden = i === n - 1;
     }
 
     function close() {
@@ -1503,7 +1541,7 @@
       root.insertBefore(slider.el, root.firstChild);
       dotsWrap.innerHTML = '';
       var multi = list.length > 1;
-      dotsWrap.hidden = !multi;
+      dotsWrap.hidden = prevBtn.hidden = nextBtn.hidden = !multi;
       if (multi) list.forEach(function () { dotsWrap.appendChild(document.createElement('span')); });
       root.classList.add('open');
       document.body.classList.add('lightbox-open');
@@ -1556,12 +1594,10 @@
     }
 
     var multi = images.length > 1;
-    var badge = null, prev = null, next = null;
+    var badge = null;
 
     function sync(i) {
       if (badge) badge.textContent = (i + 1) + ' / ' + images.length;
-      if (prev) prev.hidden = i === 0;
-      if (next) next.hidden = i === images.length - 1;
     }
 
     var slider = createSlider(images, altBase, {
@@ -1598,8 +1634,8 @@
         swatch.appendChild(btn);
         return btn;
       }
-      prev = addArrow('prev', 'Ankstesnė nuotrauka', CHEVRON_PREV, -1);
-      next = addArrow('next', 'Kita nuotrauka', CHEVRON_NEXT, 1);
+      addArrow('prev', 'Ankstesnė nuotrauka', CHEVRON_PREV, -1);
+      addArrow('next', 'Kita nuotrauka', CHEVRON_NEXT, 1);
 
       badge = document.createElement('span');
       badge.className = 'stock-count';
