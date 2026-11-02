@@ -232,6 +232,10 @@
   .sec-head { display: flex; align-items: end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 26px; }
   .sec-head h2 { font-size: clamp(1.7rem, 3vw, 2.4rem); }
   .sec-head p { margin: 8px 0 0; color: var(--muted); max-width: 36rem; }
+  .sec-head .new-note { display: flex; align-items: center; gap: .5rem; margin-top: 6px; font-size: .875rem; line-height: 1.3; }
+  /* "new" cue: a text eyebrow above the title (never on the photo) or, when most cards are new, one line under the section heading */
+  .tag-new { display: flex; align-items: center; gap: .4rem; margin: 0 0 -4px; font: 600 .75rem/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+  .tag-new::before, .new-note::before { content: ""; flex: none; width: 6px; height: 6px; background: var(--accent); transform: rotate(45deg); }
 
   /* 6 filters */
 
@@ -441,6 +445,7 @@
       <div>
         <h2>Sezono naujienos</h2>
         <p>Visą asortimentą rasite atvykę į mūsų parduotuves. Laukiame jūsų!</p>
+        <p class="new-note" id="newNote" hidden></p>
       </div>
     </div>
     <div class="grid" id="stockGrid" aria-live="polite"><p class="stock-empty">Kraunama…</p></div>
@@ -852,10 +857,9 @@
     return row;
   }
 
-  function renderStockCard(item) {
+  function renderStockCard(item, showNewTag) {
     var article = node('article', 'product');
     var ph = node('div', 'ph gal');
-    if (item.is_new) ph.appendChild(node('span', 'badge', 'Naujiena'));
     article.appendChild(ph);
     var photos = (item.images || []).filter(function (u) { return typeof u === 'string' && u; }).map(function (u, k) {
       return [u, item.name + ' – nuotrauka ' + (k + 1)];
@@ -863,6 +867,7 @@
     buildGallery(ph, photos);
 
     var body = node('div', 'body');
+    if (showNewTag && item.is_new) body.appendChild(node('p', 'tag-new', 'Naujiena'));
     body.appendChild(node('h3', null, item.name));
     if (item.code) {
       var meta = node('div', 'price-row');
@@ -936,7 +941,19 @@
       var items = await resp.json();
       if (!items || !items.length) { showMessage('Informacija ruošiama – netrukus čia pamatysite mūsų naujienas.', false); return; }
       grid.textContent = '';
-      items.forEach(function (item) { grid.appendChild(renderStockCard(item)); });
+      var total = items.length;
+      var fresh = items.filter(function (i) { return i.is_new; }).length;
+      var note = document.getElementById('newNote');
+      var cardMode = fresh > 0 && fresh * 2 <= total;
+      note.hidden = !(fresh > 0 && !cardMode);
+      if (!note.hidden) note.textContent = fresh === total ? 'Visi modeliai – naujienos' : fresh + ' iš ' + total + ' modelių – naujienos';
+      if (cardMode) {
+        // stable: new first, otherwise the feed's own order
+        items = items.map(function (it, idx) { return [it, idx]; })
+          .sort(function (a, b) { return (b[0].is_new ? 1 : 0) - (a[0].is_new ? 1 : 0) || a[1] - b[1]; })
+          .map(function (p) { return p[0]; });
+      }
+      items.forEach(function (item) { grid.appendChild(renderStockCard(item, cardMode)); });
     } catch (err) {
       clearTimeout(timeoutId);
       console.error('Featured products load failed:', err);
