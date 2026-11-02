@@ -763,6 +763,22 @@
   });
   if (location.hash === '#kontaktai') setPanel(true, false);
 
+  // The reservation message ends with "[data/laikas]". Tapping or clicking into the message box selects
+  // that placeholder once per visit to the field, so the customer just types their planned date/time over it.
+  var VISIT_PLACEHOLDER = '[data/laikas]';
+  (function () {
+    var box = document.getElementById('cf-message');
+    var armed = false;
+    function selectPlaceholder() {
+      var i = box.value.indexOf(VISIT_PLACEHOLDER);
+      if (i > -1) box.setSelectionRange(i, i + VISIT_PLACEHOLDER.length);
+    }
+    box.addEventListener('focus', function () { armed = true; setTimeout(selectPlaceholder, 0); });
+    // a mouse click places the caret after focus fires; select again once, then leave the caret alone
+    box.addEventListener('click', function () { if (armed) { armed = false; selectPlaceholder(); } });
+    box.addEventListener('blur', function () { armed = false; });
+  })();
+
   // Posts to /api/contact (worker.js, writes to D1). cf-website is a hidden honeypot:
   // real visitors never fill it, so a non-empty value means a bot.
   document.getElementById('contactForm').addEventListener('submit', async function (e) {
@@ -893,7 +909,7 @@
       setPanel(true, true);
       var msg = document.getElementById('cf-message');
       if (!msg.value.trim()) {
-        msg.value = 'Sveiki, norėčiau pasimatuoti: ' + item.name + (item.code ? ' (kodas ' + item.code + ')' : '') + '. ';
+        msg.value = 'Sveiki, norėčiau pasimatuoti: ' + item.name + (item.code ? ' (kodas ' + item.code + ')' : '') + '. Atvyksiu į parduotuvę: ' + VISIT_PLACEHOLDER + '.';
       }
     });
     body.appendChild(reserve);
