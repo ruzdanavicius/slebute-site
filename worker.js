@@ -14,6 +14,10 @@ export default {
       return handleFeatured(ctx);
     }
 
+    if (url.pathname.startsWith('/img/') && request.method === 'GET') {
+      return handleImage(url, ctx);
+    }
+
     return env.ASSETS.fetch(request);
   }
 };
@@ -53,7 +57,7 @@ async function handleFeatured(ctx) {
     body: '{}'
   });
 
-  const bodyText = await upstream.text();
+  let bodyText = await upstream.text();
 
   if (!upstream.ok) {
     // Don't cache a failure — the next request should retry against
@@ -64,11 +68,77 @@ async function handleFeatured(ctx) {
     });
   }
 
+  bodyText = routePhotosThroughEdge(bodyText);
+
   const response = new Response(bodyText, {
     status: 200,
     headers: {
       'Content-Type': 'application/json',
       'Cache-Control': 'public, max-age=' + FEATURED_CACHE_SECONDS
+    }
+  });
+
+  ctx.waitUntil(cache.put(cacheKey, response.clone()));
+  return response;
+}
+
+// Product photos live in Supabase's public "pos-images" bucket, which serves
+// them `Cache-Control: private, no-cache` — every page view was a fresh
+// download from Supabase (the egress we pay for). The feed below rewrites
+// those URLs to this Worker's own /img/<file> route, which downloads each
+// photo from Supabase once and then serves it from Cloudflare's cache (and the
+// visitor's browser) for a year. Safe because the app names every upload
+// uniquely (timestamp + random), so a replaced photo is always a new URL.
+const PHOTO_PREFIX = SUPABASE_URL + '/storage/v1/object/public/pos-images/';
+const PHOTO_NAME = /^[A-Za-z0-9._-]{1,128}\.(jpe?g|png|webp|gif|avif)$/i;
+const PHOTO_CACHE_SECONDS = 31536000;
+
+// Rewrites the Supabase photo URLs in the featured feed to /img/<file>. Any
+// other URL, or a feed that isn't the expected JSON, passes through untouched.
+function routePhotosThroughEdge(bodyText) {
+  try {
+    const items = JSON.parse(bodyText);
+    if (!Array.isArray(items)) return bodyText;
+    items.forEach(function (item) {
+      if (!item || !Array.isArray(item.images)) return;
+      item.images = item.images.map(function (src) {
+        if (typeof src !== 'string' || !src.startsWith(PHOTO_PREFIX)) return src;
+        const name = src.slice(PHOTO_PREFIX.length);
+        return PHOTO_NAME.test(name) ? '/img/' + name : src;
+      });
+    });
+    return JSON.stringify(items);
+  } catch (e) {
+    return bodyText;
+  }
+}
+
+async function handleImage(url, ctx) {
+  const name = url.pathname.slice('/img/'.length);
+  // Only plain file names from the one bucket — never a path, so this can't be
+  // used to read anything else from Supabase or to proxy arbitrary URLs.
+  if (!PHOTO_NAME.test(name)) {
+    return new Response('Not found', { status: 404 });
+  }
+
+  const cache = caches.default;
+  const cacheKey = new Request(url.origin + '/img/' + name);
+
+  const cached = await cache.match(cacheKey);
+  if (cached) return cached;
+
+  const upstream = await fetch(PHOTO_PREFIX + name);
+  const type = upstream.headers.get('Content-Type') || '';
+  if (!upstream.ok || !type.startsWith('image/')) {
+    // Missing or odd — don't cache, so a photo uploaded a moment later works.
+    return new Response('Not found', { status: 404, headers: { 'Cache-Control': 'public, max-age=60' } });
+  }
+
+  const response = new Response(await upstream.arrayBuffer(), {
+    status: 200,
+    headers: {
+      'Content-Type': type,
+      'Cache-Control': 'public, max-age=' + PHOTO_CACHE_SECONDS + ', immutable'
     }
   });
 
