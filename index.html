@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Šlebutė - Moteriškų drabužių parduotuvės Vilniuje</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
-<meta name="description" content="Šlebutė — drabužių parduotuvė Šeškinėje ir Pašilaičiuose, Vilniuje.">
+<meta name="description" content="Šlebutė – moteriški drabužiai Šeškinėje ir Pašilaičiuose, Vilniuje. Sezono naujienos ir turimi dydžiai.">
 <link rel="canonical" href="https://slebute.lt/">
 <meta name="robots" content="index, follow">
 
@@ -81,7 +81,7 @@
           "opens": "00:00",
           "closes": "00:00",
           "validFrom": "2026-10-21",
-          "validThrough": "2026-12-18"
+          "validThrough": "2026-12-20"
         }
       ]
     },
@@ -127,1779 +127,814 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
 <style>
+  /* Layout: announcement bar, sticky compact header, split hero, products before stores, full footer.
+     Tokens are the live site's own (burgundy #6B2545, cream #FAF8F6, Fraunces + Inter). Light only, by choice. */
   :root {
-    --accent-color: #6B2545;
-    --accent-tint: rgba(107, 37, 69, 0.08);
-    --bg-color: #FAF8F6;
-    --card-bg: #FFFFFF;
-    --text-primary: #241A1F;
-    --text-muted: rgba(36, 22, 30, 0.62);
-    --success-color: #477459;
-    --danger-color: #A23B3B;
-    --warning-bg: #FBF1DF;
-    --placeholder-color: #8A6B4F;
-    --border-soft: rgba(36, 22, 30, 0.12);
+    color-scheme: light;
+    --bg: #FAF8F6;
+    --card: #FFFFFF;
+    --ink: #241A1F;
+    --muted: #6B5D64;
+    --accent: #6B2545;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #F3E6EB;
+    --line: #E8E1DC;
+    --ok: #3B6A4D;
+    --ok-soft: #E4F0E8;
+    --warn-bg: #FBF1DF;
+    --warn-ink: #7A4B12;
+    --off: #8A7F84;
+    --note: #D6336C;
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 116px; }
   body {
-    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-    background: var(--bg-color);
-    color: var(--text-primary);
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  img, svg { max-width: 100%; display: block; }
-
-  a { color: var(--accent-color); }
-
-  .wrap {
-    max-width: 1080px;
-    margin: 0 auto;
-    padding: 0 clamp(1.25rem, 4vw, 2.5rem);
-  }
-
-  h1, h2, h3 {
-    font-family: 'Fraunces', Georgia, serif;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-
-  section { padding: clamp(1.5rem, 3.5vw, 2.5rem) 0; }
-
-  .section-heading {
-    font-size: clamp(1.6rem, 3vw, 2.1rem);
-    margin-bottom: 0.5rem;
-  }
-
-  .section-sub {
-    color: var(--text-muted);
-    font-size: 1rem;
-    max-width: 70ch;
-    margin-bottom: clamp(1rem, 2vw, 1.4rem);
-  }
-
-  /* ---------- Header / hero ---------- */
-
-  .hero {
-    background: var(--bg-color);
-    padding: clamp(1.25rem, 4vw, 2rem) 0 clamp(1rem, 3vw, 1.5rem);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    overflow: hidden;
-    border-bottom: 1px solid var(--border-soft);
-  }
-
-  main section {
-    scroll-margin-top: 185px;
-  }
-
-  .hero-shape {
-    position: absolute;
-    top: -90px;
-    right: -60px;
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    background: var(--accent-tint);
-  }
-
-  .brand {
-    font-family: 'Fraunces', Georgia, serif;
-    font-size: clamp(2.4rem, 7vw, 3.6rem);
-    font-weight: 600;
-    letter-spacing: -0.5px;
-  }
-
-  .brand span { color: var(--accent-color); }
-
-  .hero-brand {
-    width: min(65%, 260px);
-  }
-
-  .brand-logo {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  .tagline {
-    margin-top: 0.75rem;
-    font-size: clamp(1rem, 2.4vw, 1.25rem);
-    color: var(--text-muted);
-    max-width: 40ch;
-  }
-
-  .hero-kicker {
-    width: 100%;
-    margin-top: -0.5rem;
-    text-align: center;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    font-size: clamp(0.65rem, 1.3vw, 0.78rem);
-    color: var(--accent-color);
-  }
-
-  .hero .wrap { position: relative; container-type: inline-size; }
-
-  .hero-social {
-    position: absolute;
-    /* Centre sits about 60% down the logo, level with the script wordmark,
-       so it reads as part of the brand row rather than its own line. */
-    bottom: 1.6rem;
-    right: clamp(1.25rem, 4vw, 2.5rem);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--text-muted);
-    font-size: 0.8rem;
-    font-weight: 500;
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .hero-social:hover,
-  .hero-social:focus-visible { color: var(--accent-color); }
-
-  .hero-social-text { display: none; transition: transform 0.2s; }
-
-  .hero-social:hover .hero-social-text,
-  .hero-social:focus-visible .hero-social-text { transform: translateX(-3px); }
-
-  .hero-social:focus-visible { outline: 2px solid var(--accent-color); outline-offset: 4px; border-radius: 4px; }
-
-  .hero-social-icon { width: 1.75rem; height: 1.75rem; flex: none; display: block; opacity: 0.9; transition: opacity 0.2s; }
-
-  .hero-social:hover .hero-social-icon,
-  .hero-social:focus-visible .hero-social-icon { opacity: 1; }
-
-  /* Narrow screens: icon only, the logo needs the room. */
-  @media (min-width: 640px) {
-    .hero-social-text { display: inline-block; }
-    .hero-social-icon { width: 2rem; height: 2rem; }
-  }
-
-  .hero-nav {
-    /* Hidden for now while the site is small - bring back once there's
-       enough content to justify in-page navigation. */
-    display: none;
-    margin-top: clamp(0.85rem, 2.5vw, 1.25rem);
-    flex-wrap: wrap;
-    gap: 0.75rem;
-  }
-
-  .btn {
-    display: inline-block;
-    padding: 0.85rem 1.5rem;
-    border-radius: 999px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    text-decoration: none;
-    transition: 0.2s;
-    border: 1px solid transparent;
-  }
-
-  .btn-primary { background: var(--accent-color); color: #fff; }
-  .btn-primary:hover { background: #5a1e3a; }
-
-  .btn-ghost {
-    background: transparent;
-    color: var(--text-primary);
-    border-color: var(--border-soft);
-  }
-  .btn-ghost:hover { border-color: var(--accent-color); color: var(--accent-color); }
-
-  /* Nav links get a lighter, near-invisible treatment than the CTA
-     buttons elsewhere on the page — transparent until hovered. */
-  .hero-nav .btn {
-    background: transparent;
-    color: var(--text-primary);
-    border-color: transparent;
-    padding: 0.55rem 1.1rem;
-    font-size: 0.88rem;
-    font-weight: 500;
-  }
-
-  .hero-nav .btn:hover {
-    background: var(--accent-tint);
-    border-color: var(--border-soft);
-    color: var(--accent-color);
-  }
-
-  /* ---------- Stores ---------- */
-
-  .store-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-    gap: 1.5rem;
-  }
-
-  .store-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-soft);
-    border-radius: 16px;
-    padding: 1.75rem;
-  }
-
-  .store-card h3 {
-    font-size: 1.3rem;
-    margin-top: 1rem;
-    margin-bottom: 0.25rem;
-  }
-
-  .store-gallery {
-    position: relative;
-    margin: -1.75rem -1.75rem 1rem;
-    aspect-ratio: 4 / 3;
-    overflow: hidden;
-    border-radius: 16px 16px 0 0;
-    cursor: pointer;
-    background: var(--accent-tint);
-    user-select: none;
-  }
-
-  .store-gallery-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .store-gallery-tag {
-    position: absolute;
-    top: 0.75rem;
-    left: 0.75rem;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: #fff;
-    background: rgba(36, 22, 30, 0.55);
-    border-radius: 6px;
-    padding: 3px 9px;
-  }
-
-  .store-gallery-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: rgba(36, 22, 30, 0.5);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-
-  .store-gallery-arrow:hover {
-    background: rgba(36, 22, 30, 0.78);
-  }
-
-  .store-gallery-arrow:focus-visible {
-    outline: 2px solid #fff;
-    outline-offset: 2px;
-  }
-
-  .store-gallery-arrow svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  .store-gallery-arrow.prev { left: 0.6rem; }
-  .store-gallery-arrow.next { right: 0.6rem; }
-
-  .store-gallery-dots {
-    position: absolute;
-    bottom: 0.75rem;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 0.4rem;
-    padding: 5px 8px;
-    border-radius: 999px;
-    background: rgba(36, 22, 30, 0.35);
-  }
-
-  .store-gallery-dots .dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.55);
-    transition: 0.2s;
-  }
-
-  .store-gallery-dots .dot.active {
-    background: #fff;
-    width: 16px;
-    border-radius: 3px;
-  }
-
-  .store-gallery.is-placeholder .store-gallery-tag {
-    background: rgba(138, 107, 79, 0.75);
-  }
-
-  /* Temporary closure (Šeškinė, 2026-10-21 → 2026-12-18). The card carries
-     .is-closed in the markup; the script at the bottom removes it once the
-     closure is over, which brings the hours and map back automatically. */
-  .store-card.is-closed .store-gallery-img {
-    filter: saturate(0.4) brightness(1.07) contrast(0.9);
-  }
-
-  .store-card.is-closed .store-gallery-tag {
-    background: rgba(107, 37, 69, 0.9);
-  }
-
-  .store-card:not(.is-closed) .store-gallery-tag,
-  .store-card.is-closed .closable,
-  .store-card:not(.is-closed) .store-closure {
-    display: none;
-  }
-
-  .store-closure {
-    margin-top: 1rem;
-    background: var(--warning-bg);
-    border: 1px solid #E8D3A6;
-    border-radius: 12px;
-    padding: 0.9rem 1rem;
-  }
-
-  .store-closure-label {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--accent-color);
-    margin-bottom: 0.2rem;
-  }
-
-  .store-closure-dates {
-    font-size: 1.05rem;
-    font-weight: 700;
-    margin-bottom: 0.45rem;
-  }
-
-  .store-closure p {
-    font-size: 0.9rem;
-    line-height: 1.55;
-  }
-
-  .store-closure p + p {
-    margin-top: 0.5rem;
-  }
-
-  .store-closure a {
-    color: var(--accent-color);
-    font-weight: 600;
-  }
-
-  .store-details {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
-    margin-top: 1rem;
-  }
-
-  .store-details li {
-    display: flex;
-    gap: 0.6rem;
-    font-size: 0.92rem;
-    align-items: flex-start;
-  }
-
-  .store-details .label {
-    color: var(--text-muted);
-    min-width: 5.5rem;
-    flex-shrink: 0;
-  }
-
-  .hours {
-    display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
-  }
-
-  .hours-row {
-    display: flex;
-    gap: 0.5rem;
-  }
-
-  .hours-day {
-    min-width: 1.6rem;
-  }
-
-  /* Placeholder values Rimantas still needs to fill in — visually distinct
-     (dashed underline + muted brand-brown) so they're obviously not real data. */
-  .placeholder {
-    color: var(--placeholder-color);
-    border-bottom: 1px dashed var(--placeholder-color);
-    font-style: italic;
-  }
-
-  .store-media {
-    margin-top: 1.25rem;
-    display: flex;
-    gap: 1rem;
-    align-items: stretch;
-  }
-
-  .store-map {
-    flex: 1 1 auto;
-    min-width: 0;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid var(--border-soft);
-  }
-
-  .store-map iframe {
-    width: 100%;
-    height: 100%;
-    min-height: 150px;
-    border: 0;
-    display: block;
-  }
-
-  .store-qr {
-    flex: 0 0 auto;
-    width: 100px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.4rem;
-    text-decoration: none;
-  }
-
-  .store-qr img {
-    width: 100px;
-    height: 100px;
-    border-radius: 8px;
-    border: 1px solid var(--border-soft);
-  }
-
-  .store-qr span {
-    font-size: 0.7rem;
-    line-height: 1.2;
-    color: var(--text-muted);
-    text-align: center;
-  }
-
-  @media (max-width: 420px) {
-    .store-media { flex-direction: column; align-items: center; }
-    .store-map { width: 100%; }
-    .store-map iframe { min-height: 180px; }
-  }
-
-  /* ---------- Stock grid ---------- */
-
-  .stock-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  @media (min-width: 560px) {
-    .stock-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-
-  @media (min-width: 860px) {
-    .stock-grid { grid-template-columns: repeat(3, 1fr); }
-  }
-
-  .stock-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-soft);
-    border-radius: 14px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .stock-swatch {
-    position: relative;
-    aspect-ratio: 3 / 4;
-    width: 100%;
-    overflow: hidden;
-    background: #fff;
-  }
-
-  /* Sliding photo track, shared by the product cards and the lightbox:
-     one slide per photo, translated sideways so the old photo moves out
-     while the new one moves in (finger-following on touch screens). */
-  .slider {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    touch-action: pan-y;
-    -webkit-user-select: none;
-    user-select: none;
-  }
-
-  .slider-track {
-    display: flex;
-    height: 100%;
-    transition: transform 0.32s cubic-bezier(0.22, 0.8, 0.3, 1);
-    will-change: transform;
-  }
-
-  .slider-track.dragging { transition: none; }
-
-  .slide { flex: 0 0 100%; min-width: 0; height: 100%; }
-
-  /* contain, not cover: the whole garment is visible, never cropped. */
-  .slide img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-    -webkit-user-drag: none;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .slider-track { transition: none; }
-  }
-
-  /* On a card the slider itself is the "enlarge" target. */
-  .stock-swatch .slider { cursor: zoom-in; }
-
-  .slider:focus-visible {
-    outline: 3px solid var(--accent-color, #1a1a1a);
-    outline-offset: -3px;
-  }
-
-  .slider-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 2;
-    width: 34px;
-    height: 34px;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.92);
-    color: var(--text-primary);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.28);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-
-  .slider-arrow:hover { background: #fff; }
-  .slider-arrow:focus-visible { outline: 3px solid var(--accent-color, #1a1a1a); outline-offset: 2px; }
-  .slider-arrow svg { width: 18px; height: 18px; }
-  .slider-arrow.prev { left: 0.5rem; }
-  .slider-arrow.next { right: 0.5rem; }
-  .slider-arrow[hidden] { display: none; }
-
-  .stock-count {
-    position: absolute;
-    right: 0.6rem;
-    bottom: 0.6rem;
-    z-index: 1;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.2rem 0.55rem;
-    border-radius: 999px;
-    background: rgba(0, 0, 0, 0.62);
-    color: #fff;
-    font-size: 0.75rem;
-    font-weight: 600;
-    line-height: 1.4;
-    pointer-events: none;
-  }
-
-  /* ---------- Lightbox ---------- */
-
-  .lightbox {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-    display: none;
-    background: rgba(0, 0, 0, 0.97);
-  }
-
-  .lightbox.open { display: block; }
-  .lightbox [hidden] { display: none; }
-
-  .lightbox .slider {
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
-    cursor: default;
-  }
-
-  .lightbox-btn {
-    position: absolute;
-    z-index: 2;
-    width: 46px;
-    height: 46px;
-    border: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.16);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-
-  .lightbox-btn:hover { background: rgba(255, 255, 255, 0.3); }
-  .lightbox-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
-  .lightbox-btn svg { width: 22px; height: 22px; }
-  .lightbox-close { top: 0.9rem; right: 0.9rem; }
-  .lightbox-prev { left: 0.9rem; top: 50%; transform: translateY(-50%); }
-  .lightbox-next { right: 0.9rem; top: 50%; transform: translateY(-50%); }
-
-  .lightbox-counter {
-    position: absolute;
-    z-index: 2;
-    top: 1.25rem;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #fff;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
-    pointer-events: none;
-  }
-
-  .lightbox-dots {
-    position: absolute;
-    z-index: 2;
-    bottom: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 0.4rem;
-    pointer-events: none;
-  }
-
-  .lightbox-dots span {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.4);
-    transition: 0.2s;
-  }
-
-  .lightbox-dots span.active { background: #fff; width: 18px; border-radius: 4px; }
-
-  body.lightbox-open { overflow: hidden; }
-
-  .stock-body {
-    position: relative;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-  }
-
-  .stock-name { font-weight: 600; font-size: 0.98rem; }
-
-  /* Style code, bottom-right of the text area — small so it reads as a
-     reference for customers quoting it in the shop, not as a headline. */
-  .stock-code {
-    position: absolute;
-    right: 1rem;
-    bottom: 0.9rem;
-    font-size: 8px;
-    color: var(--text-muted);
-  }
-
-  .stock-meta {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-  }
-
-  .stock-location {
-    margin-top: 0.4rem;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--success-color);
-  }
-
-  .stock-label {
-    margin-top: 0.5rem;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--text-muted);
-  }
-
-  .stock-label + .stock-stores { margin-top: 0.1rem; }
-
-  .stock-stores {
-    margin-top: 0.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-  }
-
-  .store-dot-wrap {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    cursor: default;
-  }
-
-  .store-dot-wrap.has-popover { cursor: pointer; }
-
-  .dot {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 9px;
-    line-height: 1;
-    color: #fff;
-  }
-
-  /* Status is never color-only: the glyph inside the dot (✓/✕) carries the
-     same meaning for colorblind sighted users; aria-label on the wrapping
-     span (below) carries it for screen readers. */
-  .dot.in-stock { background: var(--success-color); }
-  .dot.out-of-stock { background: var(--danger-color); }
-
-  .dot-popover {
-    position: absolute;
-    bottom: calc(100% + 6px);
-    left: 0;
-    background: var(--text-primary);
-    color: #fff;
-    font-size: 0.76rem;
-    font-weight: 600;
-    padding: 0.35rem 0.6rem;
-    border-radius: 8px;
-    width: max-content;
-    max-width: min(17rem, 75vw);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(4px);
-    transition: 0.15s;
-    pointer-events: none;
-    z-index: 5;
-  }
-
-  .store-dot-wrap.has-popover:hover .dot-popover,
-  .store-dot-wrap.popover-open .dot-popover {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-  }
-
-  .stock-empty {
-    grid-column: 1 / -1;
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    padding: 1rem 0;
-  }
-
-  /* ---------- Contact ---------- */
-
-  .contact-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-soft);
-    border-radius: 16px;
-    padding: clamp(1.75rem, 4vw, 2.5rem);
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    max-width: 32rem;
-  }
-
-  .contact-row {
-    display: flex;
-    gap: 0.75rem;
-    font-size: 0.98rem;
-    align-items: baseline;
-  }
-
-  .contact-row .label {
-    color: var(--text-muted);
-    min-width: 4.5rem;
-    flex-shrink: 0;
-  }
-
-  .form-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-  }
-
-  .form-field label {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-  }
-
-  .form-field input,
-  .form-field textarea {
-    font: inherit;
-    font-size: 0.95rem;
-    padding: 0.65rem 0.85rem;
-    border: 1px solid var(--border-soft);
-    border-radius: 10px;
-    background: var(--bg-color);
-    color: var(--text-primary);
-    resize: vertical;
-  }
-
-  .form-field input:focus,
-  .form-field textarea:focus {
-    outline: none;
-    border-color: var(--accent-color);
-  }
-
-  .contact-status {
-    font-size: 0.88rem;
-    min-height: 1.2em;
-  }
-
-  .contact-status.ok { color: var(--success-color); }
-  .contact-status.err { color: var(--danger-color); }
-
-  .hp-field {
-    position: absolute;
-    left: -9999px;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
-  }
-
-  /* ---------- Floating chat bubble ----------
-     The contact form lives in a panel that opens from a bubble pinned to the
-     bottom-right corner. Layer 900: above the page, below the photo lightbox
-     (1000). Closed = visibility:hidden, so nothing inside can be tabbed to. */
-
-  .chat-widget {
-    position: fixed;
-    right: 1.25rem;
-    bottom: 1.25rem;
-    z-index: 900;
-  }
-
-  .chat-bubble {
-    width: 3.5rem;
-    height: 3.5rem;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    background: var(--accent-color);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 6px 20px rgba(36, 22, 30, 0.28);
-    transition: transform 0.15s ease, background 0.15s ease;
-  }
-
-  .chat-bubble:hover { background: #5a1e3a; transform: scale(1.06); }
-  .chat-bubble:focus-visible { outline: 3px solid var(--accent-color); outline-offset: 3px; }
-  .chat-bubble svg { width: 1.6rem; height: 1.6rem; }
-  .chat-bubble .icon-close { display: none; }
-  .chat-widget.open .chat-bubble .icon-chat { display: none; }
-  .chat-widget.open .chat-bubble .icon-close { display: block; }
-
-  .chat-panel {
-    position: absolute;
-    right: 0;
-    bottom: calc(100% + 0.75rem);
-    width: min(23rem, calc(100vw - 2.5rem));
-    max-height: calc(100vh - 7.5rem);
-    max-height: calc(100dvh - 7.5rem);
-    overflow-y: auto;
-    background: var(--card-bg);
-    border: 1px solid var(--border-soft);
-    border-radius: 16px;
-    box-shadow: 0 14px 40px rgba(36, 22, 30, 0.22);
-    transform-origin: bottom right;
-    opacity: 0;
-    transform: translateY(8px) scale(0.92);
-    visibility: hidden;
-    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
-  }
-
-  .chat-widget.open .chat-panel {
-    opacity: 1;
-    transform: none;
-    visibility: visible;
-    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s;
-  }
-
-  .chat-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 0.75rem;
-    padding: 1.1rem 1.25rem 0;
-  }
-
-  .chat-title { font-size: 1.4rem; margin: 0 0 0.2rem; }
-  .chat-sub { color: var(--text-muted); font-size: 0.92rem; margin: 0; }
-
-  .chat-close {
-    flex-shrink: 0;
-    width: 2rem;
-    height: 2rem;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    background: transparent;
-    color: var(--text-muted);
-    font-size: 1.5rem;
-    line-height: 1;
-  }
-
-  .chat-close:hover { background: var(--accent-tint); color: var(--accent-color); }
-  .chat-close:focus-visible { outline: 2px solid var(--accent-color); }
-
-  /* Same form as before, just without the big standalone card around it. */
-  .chat-panel .contact-card {
-    border: none;
-    border-radius: 0;
-    background: transparent;
-    padding: 1rem 1.25rem 1.25rem;
-    max-width: none;
-  }
-
-  @media (max-width: 480px) {
-    .chat-widget { right: 0.75rem; bottom: 0.75rem; }
-    .chat-panel { width: calc(100vw - 1.5rem); }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .chat-panel, .chat-widget.open .chat-panel, .chat-bubble { transition: none; }
-  }
-
-  /* ---------- Footer ---------- */
-
-  footer {
-    border-top: 1px solid var(--border-soft);
-    padding: 1.75rem 0 4rem;
-    text-align: center;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-  }
-
-  @media (max-width: 480px) {
-    .contact-row, .store-details li { flex-direction: column; gap: 0.15rem; }
-  }
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 400 16px/1.55 var(--sans);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+  .wrap { max-width: 1160px; margin: 0 auto; }
+
+  /* buttons */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-height: 46px; padding: .7rem 1.4rem; border-radius: 999px; font: 600 .95rem/1 var(--sans); text-decoration: none; border: 1.5px solid transparent; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); }
+  .btn-primary:hover { background: #571d37; }
+  .btn-ghost { background: transparent; color: var(--accent); border-color: var(--accent); }
+  .btn-ghost:hover { background: var(--accent-soft); }
+  .btn-sm { min-height: 40px; padding: .55rem 1.1rem; font-size: .875rem; }
+  .btn svg { width: 18px; height: 18px; flex: none; }
+
+  /* mockup toolbar (not part of the site) */
+
+
+  /* 1 announcement */
+  .announce { background: var(--accent); color: var(--accent-ink); font-size: .875rem; margin: 0 calc(50% - 50vw); padding: .6rem max(16px, env(safe-area-inset-right, 0px)) .6rem max(16px, env(safe-area-inset-left, 0px)); text-align: center; }
+  .announce a { font-weight: 600; text-underline-offset: 3px; }
+
+  /* 2 header */
+  .site-head { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50; background: rgba(250,248,246,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); margin: 0 calc(50% - 50vw); padding: 0 max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px)); }
+  .site-head .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 92px; }
+  .brand { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; text-decoration: none; }
+  .logo { height: 54px; width: auto; }
+  .brand-sub { font-size: .66rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
+  .nav { display: flex; align-items: center; gap: 28px; }
+  .nav a.link { text-decoration: none; font-weight: 500; font-size: .95rem; color: var(--ink); padding: 6px 0; border-bottom: 2px solid transparent; }
+  .nav a.link:hover { border-color: var(--accent); }
+  .head-actions { display: flex; align-items: center; gap: 10px; }
+  .fb { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--line); color: var(--ink); background: var(--card); }
+  .fb svg { width: 18px; height: 18px; }
+
+  /* 3 hero */
+  .hero { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(24px, 5vw, 64px); align-items: center; padding-block: clamp(28px, 5vw, 64px) clamp(4px, 1vw, 12px); }
+  .hero h1 { font-size: clamp(2.1rem, 4.6vw, 3.6rem); line-height: 1.08; }
+  .hero p.lead { font-size: 1.125rem; color: var(--muted); max-width: 34rem; margin: 18px 0 26px; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+  .status-list { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 22px; }
+  .status { display: inline-flex; align-items: center; gap: 8px; padding: .45rem .9rem; border-radius: 999px; background: var(--card); border: 1px solid var(--line); font-size: .875rem; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--off); flex: none; }
+  .status.open .dot, .pill.open .dot { background: var(--ok); box-shadow: 0 0 0 3px var(--ok-soft); }
+  .hero-photo { border-radius: 28px; overflow: hidden; justify-self: end; width: 100%; background: var(--card); box-shadow: 0 24px 60px rgba(107,37,69,.14); border: 1px solid var(--line); }
+  .hero-photo img { width: 100%; height: auto; aspect-ratio: 1.6 / 1; object-fit: cover; object-position: 50% 10%; }
+  .hero-tag { display: flex; flex-direction: column; padding: 2px 20px 4px; }
+  .hero-tag-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; }
+  .hero-tag-row + .hero-tag-row { border-top: 1px solid var(--line); }
+  .hero-tag-name { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; }
+  .hero-tag-name b { font-family: var(--serif); font-size: 1.05rem; font-weight: 600; line-height: 1.2; }
+  .hero-tag-name .pill { align-self: center; font-weight: 500; font-size: .75rem; padding: .15rem .6rem; gap: 6px; }
+  .hero-tag-name .pill .dot { width: 7px; height: 7px; }
+  .hero-tag-row .btn { min-height: 36px; padding: .45rem 1rem; font-size: .85rem; }
+  .hero-tag-addr { display: block; margin-top: 2px; color: var(--muted); font-size: .85rem; }
+  .pill.off { background: #EFE9EC; color: var(--muted); }
+  .pill.off .dot { background: var(--off); }
+
+
+  /* sections */
+  section { padding-block: clamp(40px, 6vw, 84px) 0; }
+  #naujienos { padding-top: clamp(16px, 2.5vw, 28px); }
+  .sec-head { display: flex; align-items: end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 26px; }
+  .sec-head h2 { font-size: clamp(1.7rem, 3vw, 2.4rem); }
+  .sec-head p { margin: 8px 0 0; color: var(--muted); max-width: 36rem; }
+
+  /* 6 filters */
+
+  /* 7 product cards */
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  .product { background: var(--card); border-radius: 18px; overflow: hidden; border: 1px solid var(--line); display: flex; flex-direction: column; }
+  .product .ph { position: relative; aspect-ratio: 3 / 4; background: var(--accent-soft); overflow: hidden; }
+  .product .ph img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; transition: transform .5s; }
+  .product:hover .ph img { transform: scale(1.03); }
+  .badge { position: absolute; top: 12px; left: 12px; background: var(--accent); color: #fff; font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; padding: .3rem .65rem; border-radius: 999px; }
+  .product .body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .product h3 { font-size: 1.15rem; line-height: 1.25; }
+  .code { font-size: .75rem; color: var(--muted); }
+  .sizes { font-size: .9rem; font-weight: 500; color: var(--ink); margin: 0; }
+  .avail { position: relative; display: flex; flex-direction: column; gap: 2px; font-size: .875rem; margin-top: auto; padding-top: 4px; }
+  .srow { display: flex; align-items: center; gap: 8px; width: fit-content; max-width: 100%; min-height: 36px; padding: 4px 0; border: 0; background: none; font: inherit; font-size: .875rem; text-align: left; cursor: help; }
+  .srow .pop { display: none; position: absolute; left: 0; right: 0; bottom: calc(100% + 4px); z-index: 20; padding: 10px 12px; border-radius: 10px; background: var(--ink); color: #fff; font-weight: 400; font-size: .8rem; line-height: 1.5; box-shadow: 0 6px 20px rgba(0,0,0,.25); }
+  .srow .pop b { display: block; margin-bottom: 4px; font-weight: 600; }
+  .srow.open .pop { display: block; }
+  @media (hover: hover) { .srow:hover .pop, .srow:focus-visible .pop { display: block; } }
+  .srow.yes { color: var(--ok); font-weight: 500; }
+  .srow.no { color: var(--off); }
+  .avail svg { width: 16px; height: 16px; flex: none; }
+  .product .btn { width: 100%; margin-top: 6px; }
+
+  /* photo galleries (stores + products) */
+  .gal { position: relative; }
+  .gal-open { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; display: block; }
+  .gal-open img { width: 100%; height: 100%; object-fit: cover; }
+  .gal .badge { z-index: 3; }
+  .gal-btn { position: absolute; top: 50%; transform: translateY(-50%); z-index: 3; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255,255,255,.88); color: var(--ink); display: grid; place-items: center; cursor: pointer; box-shadow: 0 1px 6px rgba(0,0,0,.25); font-size: 1.4rem; line-height: 1; }
+  .gal-btn:hover { background: #fff; }
+  .gal-btn svg { width: 18px; height: 18px; }
+  .gal-prev { left: 10px; }
+  .gal-next { right: 10px; }
+  .gal-dots { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 3; display: flex; gap: 6px; padding: 6px 10px; border-radius: 999px; background: rgba(36,26,31,.5); }
+  .gal-dot { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 50%; background: rgba(255,255,255,.55); cursor: pointer; }
+  .gal-dot[aria-current="true"] { background: #fff; width: 18px; border-radius: 4px; }
+  .lb { position: fixed; inset: 0; z-index: 100; background: rgba(20,12,16,.93); display: grid; place-items: center; padding: 56px 16px; }
+  .lb img { max-width: min(94vw, 1100px); max-height: calc(100vh - 120px); object-fit: contain; border-radius: 8px; }
+  .lb .gal-btn { background: rgba(255,255,255,.14); color: #fff; width: 48px; height: 48px; }
+  .lb .gal-btn:hover { background: rgba(255,255,255,.28); }
+  .lb .lb-close { top: max(28px, calc(env(safe-area-inset-top, 0px) + 28px)); right: max(28px, calc(env(safe-area-inset-right, 0px) + 28px)); left: auto; }
+  .lb-count { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); color: #fff; font-size: .85rem; opacity: .85; }
+
+  /* 8 stores */
+  .stores { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+  .store { background: var(--card); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; }
+  .store .ph { position: relative; aspect-ratio: 16 / 10; overflow: hidden; }
+  .store .ph img { width: 100%; height: 100%; object-fit: cover; }
+  .store.closed .ph img { filter: saturate(.35) brightness(1.05); }
+  .store .info { padding: 22px 24px 24px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+  .store h3 { font-size: 1.4rem; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; padding: .3rem .8rem; border-radius: 999px; font-size: .85rem; font-weight: 500; background: var(--accent-soft); color: var(--accent); }
+  .pill.open { background: var(--ok-soft); color: var(--ok); }
+  .pill.shut { background: var(--warn-bg); color: var(--warn-ink); }
+  .addr { margin: 0; color: var(--muted); }
+  .hours { display: grid; grid-template-columns: auto 1fr; gap: 4px 18px; margin: 0; font-size: .95rem; }
+  .hours dt { color: var(--muted); }
+  .hours dd { margin: 0; }
+  .hours .today { font-weight: 600; color: var(--ink); }
+  .closure { background: var(--warn-bg); border-radius: 14px; padding: 14px 16px; font-size: .95rem; color: var(--warn-ink); }
+  .closure b { display: block; font-size: 1rem; margin-bottom: 4px; }
+  .closure a { color: var(--accent); font-weight: 600; }
+  .store .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; }
+
+  /* store map + QR */
+  .store-media { display: flex; gap: 16px; align-items: flex-start; margin-top: auto; }
+  .store-map { position: relative; flex: 1; min-width: 0; height: 264px; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: #E9E4DE; display: block; }
+  .store-qr { flex: none; width: 140px; display: flex; flex-direction: column; gap: 6px; text-align: center; font-size: .78rem; color: var(--muted); text-decoration: none; }
+  .store-qr img, .store-qr svg { display: block; width: 140px; height: 140px; border-radius: 12px; border: 1px solid var(--line); background: #fff; }
+
+  /* 10 contact */
+  .chat-panel { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(80px + env(safe-area-inset-bottom, 0px)); z-index: 70; width: min(400px, calc(100vw - 32px)); max-height: calc(100% - 140px); overflow-y: auto; background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 20px; box-shadow: 0 12px 40px rgba(36,26,31,.22); }
+  .chat-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+  .chat-head h2 { font-size: 1.35rem; }
+  .chat-head p { margin: 6px 0 0; color: var(--muted); font-size: .9rem; }
+  .chat-close { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--line); background: var(--bg); color: var(--ink); font-size: 1.4rem; line-height: 1; cursor: pointer; }
+  .chat-panel form { display: flex; flex-direction: column; gap: 14px; }
+  label { font-size: .875rem; font-weight: 500; display: block; margin-bottom: 6px; }
+  input[type=text], textarea { width: 100%; font: inherit; color: var(--ink); background: var(--bg); border: 1.5px solid var(--line); border-radius: 12px; padding: .75rem .9rem; }
+  textarea { resize: vertical; min-height: 110px; }
+  .form-status { margin: 0; min-height: 1.2em; font-size: .9rem; color: var(--ok); }
+
+  /* 11 footer */
+  footer { margin-top: clamp(48px, 7vw, 96px); background: #241A1F; color: #E9E0E4; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); padding: 44px max(16px, env(safe-area-inset-right, 0px)) 28px max(16px, env(safe-area-inset-left, 0px)); }
+  .foot-grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr; gap: 32px; }
+  footer h4 { margin: 0 0 12px; font: 600 .75rem var(--sans); letter-spacing: .14em; text-transform: uppercase; color: #BBA9B1; }
+  footer p, footer li { font-size: .9rem; margin: 0 0 6px; }
+  footer ul { list-style: none; margin: 0; padding: 0; }
+  footer a { text-underline-offset: 3px; }
+  .foot-logo { height: 64px; width: auto; background: #FAF8F6; border-radius: 10px; padding: 6px 10px; margin-bottom: 14px; }
+  .legal { border-top: 1px solid rgba(255,255,255,.14); margin-top: 32px; padding-top: 18px; font-size: .8rem; color: #BBA9B1; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+  /* 12 contact pill */
+  .fab { cursor: pointer; position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 55; display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 20px 0 16px; border-radius: 999px; background: var(--accent); color: #fff; border: 0; font: 600 .9rem var(--sans); text-decoration: none; box-shadow: 0 6px 20px rgba(107,37,69,.35); }
+  .fab svg { width: 22px; height: 22px; }
+
+  /* legend */
+
+  @media (max-width: 900px) {
+    .nav a.link { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-photo { justify-self: stretch; order: -1; }
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .stores { grid-template-columns: 1fr; }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) {
+    .logo { height: 42px; }
+    .brand-sub { font-size: .58rem; letter-spacing: .1em; }
+    .hero-tag-row { flex-wrap: nowrap; padding: 10px 0; }
+    .site-head .wrap { height: 78px; }
+    .product .body { padding: 12px 12px 14px; }
+    .product h3 { font-size: 1rem; }
+    .fab span { display: none; }
+    .fab { padding: 0; width: 52px; justify-content: center; }
+    .head-actions .btn span { display: none; }
+    .head-actions .btn { padding: 0; width: 40px; min-height: 40px; }
+    .foot-grid { grid-template-columns: 1fr; }
+    .store-qr { display: none; }
+    .store-map { height: 210px; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .product .ph img { transition: none; } }
+
+  /* live-site additions */
+  [hidden] { display: none !important; }
+  html, body { overflow-x: clip; }
+  .hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  .stock-empty { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; gap: 14px; margin: 0; padding: 32px 0; color: var(--muted); text-align: center; }
+  .stock-empty p { margin: 0; }
+  .srow-icon { display: inline-flex; }
+  .store:not(.closed) .when-closed, .store.closed .when-open { display: none; }
+  .store-map iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  footer { padding-bottom: 88px; } /* keeps the legal line clear of the contact button */
+  .form-note { margin: 0; font-size: .8rem; color: var(--muted); }
+  .form-status.ok { color: var(--ok); }
+  .form-status.err { color: var(--accent); }
 </style>
 </head>
 <body>
 
-<header class="hero">
-  <div class="hero-shape" aria-hidden="true"></div>
+<div class="announce" id="closureBar" role="note">
+  Šeškinės parduotuvė uždaryta, atsidarome gruodžio 21 d. Dirbame Pašilaičiuose. <a href="#parduotuves">Kaip mus rasti</a>
+</div>
+
+<header class="site-head">
   <div class="wrap">
-    <a class="hero-social" href="https://www.facebook.com/slebute" target="_blank" rel="noopener" aria-label="Apsilankykite mūsų Facebook puslapyje" title="Apsilankykite mūsų Facebook puslapyje">
-      <img class="hero-social-icon" src="assets/fb-dress.png" width="96" height="96" alt="" aria-hidden="true">
-      <span class="hero-social-text">Apsilankykite mūsų Facebook puslapyje</span>
+    <a class="brand" href="#top" aria-label="Šlebutė, moteriški drabužiai, į pradžią">
+      <img class="logo" src="assets/logo-mark.png" width="1538" height="527" alt="Šlebutė">
+      <span class="brand-sub">Moteriški drabužiai</span>
     </a>
-    <div class="hero-brand">
-      <img class="brand-logo" src="assets/logo-mark.png" width="1538" height="527" alt="Šlebutė">
-      <p class="hero-kicker">MOTERIŠKI DRABUŽIAI</p>
-    </div>
-    <nav class="hero-nav" aria-label="Greitos nuorodos">
-      <a class="btn btn-primary" href="#parduotuves">Parduotuvės</a>
-      <a class="btn btn-ghost" href="#kontaktai" data-open-chat>Kontaktai</a>
+    <nav class="nav" aria-label="Pagrindinė navigacija">
+      <a class="link" href="#naujienos">Naujienos</a>
+      <a class="link" href="#parduotuves">Parduotuvės</a>
+      <a class="link" href="#kontaktai" data-open-chat>Kontaktai</a>
     </nav>
+    <div class="head-actions">
+      <a class="fb" href="https://www.facebook.com/slebute" target="_blank" rel="noopener" aria-label="Šlebutė Facebook">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H7.9v3h2.6V21h3z"/></svg>
+      </a>
+      <a class="btn btn-primary btn-sm" href="#parduotuves">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+        <span>Rasti parduotuvę</span>
+      </a>
+    </div>
   </div>
 </header>
 
-<main>
+<main id="top" class="wrap">
+  <div class="hero">
+    <div>
+      <h1>Lengva būti stilingai. Kiekvieną dieną</h1>
+      <p class="lead">Išsirinkite savo favoritus ekrane, o tobulą dydį – mūsų parduotuvėse!</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#naujienos">Žiūrėti naujienas</a>
+        <a class="btn btn-ghost" href="#parduotuves">Rasti parduotuvę</a>
+      </div>
+      <div class="status-list" role="status">
+        <div class="status" data-status="pasilaiciai"><span class="dot"></span><span class="st-text">Pašilaičiai</span></div>
+        <div class="status" data-status="seskine"><span class="dot"></span><span class="st-text">Šeškinė</span></div>
+      </div>
+    </div>
+    <div class="hero-photo">
+      <img src="assets/hero.webp" alt="Languota sarafano tipo suknelė su diržu" width="896" height="1200" fetchpriority="high">
+      <div class="hero-tag">
+        <div class="hero-tag-row">
+          <div>
+            <div class="hero-tag-name"><b>Pašilaičiai</b><span class="pill" data-pill="pasilaiciai"><span class="dot"></span><span class="pill-text"></span></span></div>
+            <span class="hero-tag-addr">Laisvės pr. 82, Vilnius</span>
+          </div>
+          <a class="btn btn-primary" href="https://maps.google.com/?cid=12831881595784482328" target="_blank" rel="noopener">Žemėlapis</a>
+        </div>
+        <div class="hero-tag-row">
+          <div>
+            <div class="hero-tag-name"><b>Šeškinė</b><span class="pill" data-pill="seskine"><span class="dot"></span><span class="pill-text"></span></span></div>
+            <span class="hero-tag-addr">Šeškinės g. 32, Vilnius</span>
+          </div>
+          <a class="btn btn-ghost" href="https://maps.google.com/?cid=14542780758067011715" target="_blank" rel="noopener">Žemėlapis</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section id="naujienos">
+    <div class="sec-head">
+      <div>
+        <h2>Sezono naujienos</h2>
+        <p>Visą asortimentą rasite atvykę į mūsų parduotuves. Laukiame jūsų!</p>
+      </div>
+    </div>
+    <div class="grid" id="stockGrid" aria-live="polite"><p class="stock-empty">Kraunama…</p></div>
+  </section>
 
   <section id="parduotuves">
-    <div class="wrap">
-      <h2 class="section-heading">Parduotuvės</h2>
-      <p class="section-sub">Užsukite į mūsų parduotuves Vilniuje</p>
-
-      <div class="store-grid">
-        <article class="store-card is-closed" id="seskine-card">
-          <div
-            class="store-gallery"
-            role="group"
-            aria-roledescription="carousel"
-            aria-label="Šeškinė – nuotraukos"
-            data-photos='[{"src":"assets/seskine-outside.jpg","alt":"Šlebutė Šeškinė – parduotuvės įėjimas prekybos centre"},{"src":"assets/seskine-inside.jpg","alt":"Šlebutė Šeškinė – parduotuvės vidus"},{"src":"assets/seskine-3.jpg","alt":"Šlebutė Šeškinė – pasažo įėjimas iš lauko"},{"src":"assets/seskine-4.jpg","alt":"Šlebutė Šeškinė – parduotuvė pasažo koridoriuje"},{"src":"assets/seskine-5.jpg","alt":"Šlebutė Šeškinė – parduotuvės vitrina ir įėjimas"},{"src":"assets/seskine-6.jpg","alt":"Šlebutė Šeškinė – parduotuvės vidus ir kasa"},{"src":"assets/seskine-7.jpg","alt":"Šlebutė Šeškinė – parduotuvės vidus ir matavimosi kabinos"}]'>
-            <img class="store-gallery-img" src="assets/seskine-outside.jpg" alt="Šlebutė Šeškinė – parduotuvės įėjimas prekybos centre">
-            <span class="store-gallery-tag">Laikinai uždaryta</span>
-          </div>
-          <h3>Šeškinė - Pasažas</h3>
-          <ul class="store-details">
-            <li><span class="label">Adresas</span> <span>Šeškinės g. 32, Vilnius, 07157</span></li>
-            <li class="closable"><span class="label">Darbo laikas</span> <span class="hours"><span class="hours-row"><span class="hours-day">I–V</span><span>10:00–18:30</span></span><span class="hours-row"><span class="hours-day">VI</span><span>10:00–15:00</span></span><span class="hours-row"><span class="hours-day">VII</span><span>Nedirbame</span></span></span></li>
-          </ul>
-
-          <div class="store-closure" role="note">
-            <div class="store-closure-label">Laikinai uždaryta</div>
-            <div class="store-closure-dates">2026 m. spalio 21 d. – gruodžio 18 d.</div>
-            <p>Dėl Šeškinės prekybos centro ir pasažo remonto darbų mūsų parduotuvė šiuo laikotarpiu bus uždaryta. Atsiprašome už nepatogumus.</p>
-            <p>Maloniai kviečiame apsilankyti mūsų parduotuvėje <a href="#pasilaiciai-card">Pašilaičiuose, Laisvės pr. 82</a>.</p>
-          </div>
-
-          <div class="store-media closable">
-            <div class="store-map">
-              <iframe
-                src="https://www.google.com/maps?q=54.715447,25.245241&hl=lt&z=16&output=embed"
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"
-                title="Šlebutė Šeškinė žemėlapyje"
-                aria-label="Šlebutė Šeškinė žemėlapyje"></iframe>
-            </div>
-            <a class="store-qr" href="https://maps.app.goo.gl/m4VYjkaWGSUWzMod8" target="_blank" rel="noopener">
-              <img src="assets/qr-seskine.png" width="140" height="140" alt="QR kodas su nuoroda į kryptis iki Šlebutė Šeškinė">
-              <span>Žemėlapio nuoroda telefone</span>
-            </a>
-          </div>
-        </article>
-
-        <article class="store-card" id="pasilaiciai-card">
-          <div
-            class="store-gallery"
-            role="group"
-            aria-roledescription="carousel"
-            aria-label="Pašilaičiai – nuotraukos"
-            data-photos='[{"src":"assets/pasilaiciai-outside.jpg","alt":"Šlebutė Pašilaičiai – parduotuvės įėjimas prekybos centre"},{"src":"assets/pasilaiciai-inside.jpg","alt":"Šlebutė Pašilaičiai – parduotuvės vidus"},{"src":"assets/pasilaiciai-3.jpg","alt":"Šlebutė Pašilaičiai – parduotuvės vidus ir drabužių stovai"},{"src":"assets/pasilaiciai-4.jpg","alt":"Šlebutė Pašilaičiai – parduotuvės salė"}]'>
-            <img class="store-gallery-img" src="assets/pasilaiciai-outside.jpg" alt="Šlebutė Pašilaičiai – parduotuvės įėjimas prekybos centre">
-          </div>
+    <div class="sec-head">
+      <div>
+        <h2>Parduotuvės</h2>
+        <p>Užsukite į mūsų parduotuves Vilniuje.</p>
+      </div>
+    </div>
+    <div class="stores">
+      <article class="store" id="pasilaiciai-card" data-store="pasilaiciai">
+        <div class="ph gal" data-gallery="pasilaiciai"></div>
+        <div class="info">
           <h3>Pašilaičiai</h3>
-          <ul class="store-details">
-            <li><span class="label">Adresas</span> <span>Laisvės pr. 82, Vilnius, 06128</span></li>
-            <li><span class="label">Darbo laikas</span> <span class="hours"><span class="hours-row"><span class="hours-day">I–V</span><span>10:00–18:00</span></span><span class="hours-row"><span class="hours-day">VI</span><span>10:00–15:00</span></span><span class="hours-row"><span class="hours-day">VII</span><span>Nedirbame</span></span></span></li>
-          </ul>
-
+          <span class="pill" data-pill="pasilaiciai"><span class="dot"></span><span class="pill-text"></span></span>
+          <p class="addr">Laisvės pr. 82, Vilnius, 06128</p>
+          <dl class="hours" data-hours="pasilaiciai"></dl>
           <div class="store-media">
             <div class="store-map">
-              <iframe
-                src="https://www.google.com/maps?q=54.724111,25.233052&hl=lt&z=16&output=embed"
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"
-                title="Šlebutė Pašilaičiai žemėlapyje"
-                aria-label="Šlebutė Pašilaičiai žemėlapyje"></iframe>
+              <iframe src="https://www.google.com/maps?q=%C5%A0lebut%C4%97%20Laisv%C4%97s%20pr.%2082%20Vilnius&amp;hl=lt&amp;z=16&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Šlebutė Pašilaičiai žemėlapyje"></iframe>
             </div>
-            <a class="store-qr" href="https://maps.app.goo.gl/vDnfGCtZ3odKY1M39" target="_blank" rel="noopener">
-              <img src="assets/qr-pasilaiciai.png" width="140" height="140" alt="QR kodas su nuoroda į kryptis iki Šlebutė Pašilaičiai">
+            <a class="store-qr" href="https://maps.google.com/?cid=12831881595784482328" target="_blank" rel="noopener">
+              <img src="assets/qr-pasilaiciai.png" width="140" height="140" alt="QR kodas su nuoroda į Šlebutė Pašilaičiai Google žemėlapyje">
               <span>Žemėlapio nuoroda telefone</span>
             </a>
           </div>
-        </article>
-      </div>
+        </div>
+      </article>
+
+      <article class="store closed" id="seskine-card" data-store="seskine">
+        <div class="ph gal" data-gallery="seskine"><span class="badge when-closed">Uždaryta</span></div>
+        <div class="info">
+          <h3>Šeškinė · Pasažas</h3>
+          <span class="pill" data-pill="seskine"><span class="dot"></span><span class="pill-text"></span></span>
+          <p class="addr">Šeškinės g. 32, Vilnius, 07157</p>
+          <div class="closure when-closed" role="note">
+            <b>Uždaryta iki gruodžio 21 d.</b>
+            Dėl prekybos centro ir pasažo remonto darbų parduotuvė uždaryta. Atsidarome gruodžio 21 d. Atsiprašome už nepatogumus.
+            <br>Kviečiame į <a href="#pasilaiciai-card">Pašilaičius, Laisvės pr. 82</a>.
+          </div>
+          <dl class="hours when-open" data-hours="seskine"></dl>
+          <div class="store-media when-open">
+            <div class="store-map">
+              <iframe src="https://www.google.com/maps?q=%C5%A0lebut%C4%97%20%C5%A0e%C5%A1kin%C4%97s%20g.%2032%20Vilnius&amp;hl=lt&amp;z=16&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Šlebutė Šeškinė žemėlapyje"></iframe>
+            </div>
+            <a class="store-qr" href="https://maps.google.com/?cid=14542780758067011715" target="_blank" rel="noopener">
+              <img src="assets/qr-seskine.png" width="140" height="140" alt="QR kodas su nuoroda į Šlebutė Šeškinė Google žemėlapyje">
+              <span>Žemėlapio nuoroda telefone</span>
+            </a>
+          </div>
+          <div class="actions when-closed"><a class="btn btn-primary btn-sm" href="#pasilaiciai-card">Eiti į Pašilaičius</a></div>
+        </div>
+      </article>
     </div>
   </section>
-
-  <section id="prekes">
-    <div class="wrap">
-      <h2 class="section-heading">Sezono naujienos bei akcentai</h2>
-      <p class="section-sub">Visą asortimentą rasite atvykę į mūsų parduotuves. Laukiame jūsų!</p>
-
-      <!--
-        Populated live from Supabase's rpc_get_featured_products() — see
-        loadFeaturedProducts() near the end of this file. Which ~12 products
-        show rotates daily (set via the "Feature on website" checkbox in
-        SlebuteApp's Manage Catalogue, manager/admin only); whether each is
-        actually in stock right now, and which sizes, is fetched fresh on
-        every page load. Never fewer than zero, never more than what's
-        actually featured — no placeholder filler if fewer than 12.
-      -->
-      <div class="stock-grid" id="stock-grid">
-        <p class="stock-empty" id="stock-loading">Kraunama...</p>
-      </div>
-    </div>
-  </section>
-
 </main>
 
 <footer>
-  <div class="wrap">
-    <span id="footer-year">2026</span> © Šlebutė
+  <div class="wrap foot-grid">
+    <div>
+      <img class="foot-logo" src="assets/logo-mark.png" width="1538" height="527" alt="Šlebutė">
+      <p>Moteriški drabužiai Vilniuje.</p>
+    </div>
+    <div>
+      <h4>Parduotuvės</h4>
+      <ul><li>Pašilaičiai, Laisvės pr. 82</li><li>Šeškinė, Šeškinės g. 32</li></ul>
+    </div>
+    <div>
+      <h4>Darbo laikas</h4>
+      <ul><li>Pašilaičiai: I–V 10:00–18:00, VI 10:00–15:00</li><li>Šeškinė: I–V 10:00–18:30, VI 10:00–15:00</li><li>VII nedirbame</li></ul>
+    </div>
+    <div>
+      <h4>Sekite mus</h4>
+      <ul><li><a href="https://www.facebook.com/slebute" target="_blank" rel="noopener">Facebook</a></li></ul>
+    </div>
   </div>
+  <div class="wrap legal"><span>© <span id="footer-year">2026</span> Šlebutė</span><span>Moteriški drabužiai Vilniuje</span></div>
 </footer>
 
-<!-- Contact form: a chat bubble pinned bottom-right; the form opens from it.
-     Same fields and same /api/contact submit as before (script below). -->
-<div class="chat-widget" id="chatWidget">
-  <div class="chat-panel" id="chatPanel" role="dialog" aria-modal="false" aria-labelledby="chatTitle" aria-hidden="true">
-    <div class="chat-head">
-      <div>
-        <h2 class="chat-title" id="chatTitle">Kontaktai</h2>
-        <p class="chat-sub">Turite klausimų? Parašykite mums.</p>
-      </div>
-      <button type="button" class="chat-close" id="chatClose" aria-label="Uždaryti">&times;</button>
-    </div>
-
-    <form class="contact-card" id="contactForm">
-      <div class="form-field">
-        <label for="cf-name">Vardas</label>
-        <input type="text" id="cf-name" name="name" maxlength="200" required>
-      </div>
-      <div class="form-field">
-        <label for="cf-contact">Tel. nr. arba el. paštas</label>
-        <input type="text" id="cf-contact" name="contact" maxlength="200" required>
-      </div>
-      <div class="form-field">
-        <label for="cf-message">Žinutė</label>
-        <textarea id="cf-message" name="message" rows="4" maxlength="4000" required></textarea>
-      </div>
-      <input type="text" class="hp-field" id="cf-website" name="website" autocomplete="off" tabindex="-1" aria-hidden="true">
-      <button type="submit" class="btn btn-primary" id="cf-submit" style="align-self:flex-start;">Siųsti</button>
-      <p class="contact-status" id="cf-status" role="status" aria-live="polite"></p>
-    </form>
+<div class="chat-panel" id="kontaktai" role="dialog" aria-modal="false" aria-labelledby="chatTitle" hidden>
+  <div class="chat-head">
+    <div><h2 id="chatTitle">Parašykite mums</h2><p>Paklauskite apie modelį, dydį ar rezervaciją. Atsakome darbo valandomis.</p></div>
+    <button type="button" class="chat-close" id="chatClose" aria-label="Uždaryti">&times;</button>
   </div>
-
-  <button type="button" class="chat-bubble" id="chatBubble" aria-expanded="false" aria-controls="chatPanel" aria-label="Parašykite mums" title="Parašykite mums">
-    <svg class="icon-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.55L3 20.5l1.5-5.1A8.5 8.5 0 1 1 21 11.5Z"/></svg>
-    <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
-  </button>
+  <form id="contactForm">
+    <div><label for="cf-name">Vardas</label><input type="text" id="cf-name" name="name" maxlength="200" autocomplete="name" required></div>
+    <div><label for="cf-contact">Tel. nr. arba el. paštas</label><input type="text" id="cf-contact" name="contact" maxlength="200" autocomplete="off" required></div>
+    <div><label for="cf-message">Žinutė</label><textarea id="cf-message" name="message" rows="4" maxlength="4000" required></textarea></div>
+    <input type="text" class="hp-field" id="cf-website" name="website" autocomplete="off" tabindex="-1" aria-hidden="true">
+    <p class="form-note">Jūsų kontaktus naudosime tik atsakymui į šią žinutę.</p>
+    <button class="btn btn-primary" type="submit" id="cf-submit" style="align-self:flex-start">Siųsti</button>
+    <p class="form-status" id="cf-status" role="status" aria-live="polite"></p>
+  </form>
 </div>
 
+<button type="button" class="fab" id="chatBubble" aria-expanded="false" aria-controls="kontaktai">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>
+  <span>Parašykite mums</span>
+</button>
+
 <script>
-  document.getElementById('footer-year').textContent = new Date().getFullYear();
+(function () {
+  'use strict';
 
-  // Šeškinė temporary closure ends after 2026-12-18 (Vilnius time, UTC+2 in
-  // winter). After that the card drops .is-closed and shows hours + map again.
-  (function () {
-    var card = document.getElementById('seskine-card');
-    if (card && Date.now() >= Date.parse('2026-12-19T00:00:00+02:00')) {
-      card.classList.remove('is-closed');
+  // ---------- Stores: one config drives the hero, the store cards and the product rows ----------
+  function week(weekday, saturday) { return { 0: null, 1: weekday, 2: weekday, 3: weekday, 4: weekday, 5: weekday, 6: saturday }; }
+  var STORES = [
+    { key: 'pasilaiciai', name: 'Pašilaičiai', loc: 'Pašilaičiuose', hours: week([600, 1080], [600, 900]) },
+    // Šeškinė is closed for renovation until 2026-12-21 (00:00 Vilnius time, UTC+2 in winter).
+    // After that the card shows hours + map again and the status becomes live, no redeploy needed.
+    { key: 'seskine', name: 'Šeškinė', loc: 'Šeškinėje', hours: week([600, 1110], [600, 900]),
+      reopen: '2026-12-21', reopenLong: 'gruodžio 21 d.', reopenShort: 'gruod. 21 d.' }
+  ];
+  var DAY_ACC = ['sekmadienį', 'pirmadienį', 'antradienį', 'trečiadienį', 'ketvirtadienį', 'penktadienį', 'šeštadienį'];
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function clock(mins) { return pad(Math.floor(mins / 60)) + ':' + pad(mins % 60); }
+  function lowerFirst(s) { return s.charAt(0).toLowerCase() + s.slice(1); }
+
+  function vilnius() {
+    var parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Vilnius', weekday: 'short', hour: 'numeric', minute: 'numeric', hour12: false }).formatToParts(new Date());
+    function get(t) { return parts.filter(function (p) { return p.type === t; })[0].value; }
+    return { dow: { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 }[get('weekday')], mins: (parseInt(get('hour'), 10) % 24) * 60 + parseInt(get('minute'), 10) };
+  }
+  function closedLong(store) {
+    return !!store.reopen && Date.now() < Date.parse(store.reopen + 'T00:00:00+02:00');
+  }
+  // { open, closed (long closure), text, hero } for one store, right now
+  function stateOf(store) {
+    if (closedLong(store)) {
+      return { open: false, closed: true, text: 'Uždaryta iki ' + store.reopenLong, hero: store.name + ': uždaryta. Atsidarome ' + store.reopenLong };
     }
-  })();
-
-  // Store photo galleries: tap/click the photo or the arrows for next/previous,
-  // swipe on touch screens, ArrowLeft/ArrowRight when the gallery has focus.
-  var CHEVRON_PREV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
-  var CHEVRON_NEXT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
-
-  document.querySelectorAll('.store-gallery').forEach(function (gallery) {
-    var photos = JSON.parse(gallery.dataset.photos);
-    if (photos.length < 2) return;
-    var index = 0;
-    var img = gallery.querySelector('.store-gallery-img');
-
-    var dotsWrap = document.createElement('span');
-    dotsWrap.className = 'store-gallery-dots';
-    dotsWrap.setAttribute('aria-hidden', 'true');
-    var dots = photos.map(function () {
-      var dot = document.createElement('span');
-      dot.className = 'dot';
-      dotsWrap.appendChild(dot);
-      return dot;
-    });
-
-    function show(i) {
-      index = (i + photos.length) % photos.length;
-      img.src = photos[index].src;
-      img.alt = photos[index].alt;
-      dots.forEach(function (dot, d) { dot.classList.toggle('active', d === index); });
-      new Image().src = photos[(index + 1) % photos.length].src;
+    var t = vilnius(), h = store.hours[t.dow], text;
+    if (h && t.mins >= h[0] && t.mins < h[1]) {
+      return { open: true, text: 'Atidaryta dabar, iki ' + clock(h[1]), hero: store.name + ': atidaryta dabar, iki ' + clock(h[1]) };
     }
+    if (h && t.mins < h[0]) {
+      text = 'Šiandien atidarysime ' + clock(h[0]);
+    } else {
+      for (var i = 1; i <= 7; i++) {
+        var d = (t.dow + i) % 7;
+        if (store.hours[d]) { text = 'Uždaryta. Atidarysime ' + (i === 1 ? 'rytoj' : DAY_ACC[d]) + ' ' + clock(store.hours[d][0]); break; }
+      }
+    }
+    return { open: false, text: text, hero: store.name + ': ' + lowerFirst(text) };
+  }
 
-    function addArrow(dir, label, icon) {
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'store-gallery-arrow ' + dir;
-      btn.setAttribute('aria-label', label);
-      btn.innerHTML = icon;
-      btn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        show(index + (dir === 'next' ? 1 : -1));
+  function renderHours() {
+    var today = vilnius().dow;
+    document.querySelectorAll('dl[data-hours]').forEach(function (dl) {
+      var store = STORES.filter(function (s) { return s.key === dl.dataset.hours; })[0];
+      if (!store) return;
+      dl.textContent = '';
+      [['I–V', [1, 2, 3, 4, 5], store.hours[1]], ['VI', [6], store.hours[6]], ['VII', [0], store.hours[0]]].forEach(function (row) {
+        var dt = document.createElement('dt'), dd = document.createElement('dd');
+        dt.textContent = row[0];
+        dd.textContent = row[2] ? clock(row[2][0]) + '–' + clock(row[2][1]) : 'Nedirbame';
+        if (row[1].indexOf(today) > -1) { dt.className = dd.className = 'today'; }
+        dl.appendChild(dt); dl.appendChild(dd);
       });
-      gallery.appendChild(btn);
+    });
+  }
+
+  function updateStatuses() {
+    var anyClosed = false;
+    STORES.forEach(function (store) {
+      var st = stateOf(store);
+      if (st.closed) anyClosed = true;
+      var card = document.getElementById(store.key + '-card');
+      if (card) card.classList.toggle('closed', !!st.closed);
+      document.querySelectorAll('[data-pill="' + store.key + '"]').forEach(function (pill) {
+        var inCard = !!pill.closest('.store');
+        pill.className = 'pill' + (st.open ? ' open' : (st.closed ? (inCard ? ' shut' : ' off') : (inCard ? '' : ' off')));
+        pill.querySelector('.pill-text').textContent = st.text;
+      });
+      document.querySelectorAll('[data-status="' + store.key + '"]').forEach(function (line) {
+        line.classList.toggle('open', st.open);
+        line.querySelector('.st-text').textContent = st.hero;
+      });
+    });
+    var bar = document.getElementById('closureBar');
+    if (bar) bar.hidden = !anyClosed;
+    renderHours();
+  }
+  updateStatuses();
+  setInterval(updateStatuses, 60000);
+
+  var yearEl = document.getElementById('footer-year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  // ---------- Photo galleries + lightbox (store cards and product cards) ----------
+  var STORE_PHOTOS = {
+    pasilaiciai: [
+      ['assets/pasilaiciai-outside.jpg', 'Šlebutė Pašilaičiai – parduotuvės įėjimas prekybos centre'],
+      ['assets/pasilaiciai-inside.jpg', 'Šlebutė Pašilaičiai – parduotuvės vidus'],
+      ['assets/pasilaiciai-3.jpg', 'Šlebutė Pašilaičiai – parduotuvės vidus ir drabužių stovai'],
+      ['assets/pasilaiciai-4.jpg', 'Šlebutė Pašilaičiai – parduotuvės salė']
+    ],
+    seskine: [
+      ['assets/seskine-outside.jpg', 'Šlebutė Šeškinė – parduotuvės įėjimas prekybos centre'],
+      ['assets/seskine-inside.jpg', 'Šlebutė Šeškinė – parduotuvės vidus'],
+      ['assets/seskine-3.jpg', 'Šlebutė Šeškinė – pasažo įėjimas iš lauko'],
+      ['assets/seskine-4.jpg', 'Šlebutė Šeškinė – parduotuvė pasažo koridoriuje'],
+      ['assets/seskine-5.jpg', 'Šlebutė Šeškinė – parduotuvės vitrina ir įėjimas'],
+      ['assets/seskine-6.jpg', 'Šlebutė Šeškinė – parduotuvės vidus ir kasa'],
+      ['assets/seskine-7.jpg', 'Šlebutė Šeškinė – parduotuvės vidus ir matavimosi kabinos']
+    ]
+  };
+  var CHEV_L = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
+  var CHEV_R = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
+
+  function mkBtn(cls, label, html) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = cls; b.setAttribute('aria-label', label); b.innerHTML = html || ''; // html is only our own constant icons
+    return b;
+  }
+  function swipe(el, go) {
+    var x0 = null;
+    el.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+    el.addEventListener('touchend', function (e) {
+      if (x0 === null) return;
+      var dx = e.changedTouches[0].clientX - x0; x0 = null;
+      if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+    }, { passive: true });
+  }
+
+  function openLightbox(photos, start, onChange, opener) {
+    var i = start;
+    var lb = document.createElement('div');
+    lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Nuotraukos');
+    var img = document.createElement('img');
+    var close = mkBtn('gal-btn lb-close', 'Uždaryti', '&times;');
+    var prev = mkBtn('gal-btn gal-prev', 'Ankstesnė nuotrauka', CHEV_L);
+    var next = mkBtn('gal-btn gal-next', 'Kita nuotrauka', CHEV_R);
+    var count = document.createElement('div'); count.className = 'lb-count';
+    lb.appendChild(img); lb.appendChild(close); lb.appendChild(count);
+    if (photos.length > 1) { lb.appendChild(prev); lb.appendChild(next); }
+    function show(n) {
+      i = (n + photos.length) % photos.length;
+      img.src = photos[i][0]; img.alt = photos[i][1];
+      count.textContent = (i + 1) + ' / ' + photos.length;
+      onChange(i);
     }
+    function shut() { document.removeEventListener('keydown', key); lb.remove(); opener.focus(); }
+    function key(e) {
+      if (e.key === 'Escape') shut();
+      else if (e.key === 'ArrowLeft' && photos.length > 1) show(i - 1);
+      else if (e.key === 'ArrowRight' && photos.length > 1) show(i + 1);
+    }
+    close.addEventListener('click', shut);
+    prev.addEventListener('click', function () { show(i - 1); });
+    next.addEventListener('click', function () { show(i + 1); });
+    lb.addEventListener('click', function (e) { if (e.target === lb) shut(); });
+    swipe(lb, function (d) { if (photos.length > 1) show(i + d); });
+    document.addEventListener('keydown', key);
+    document.body.appendChild(lb);
+    show(i);
+    close.focus();
+  }
 
-    addArrow('prev', 'Ankstesnė nuotrauka', CHEVRON_PREV);
-    addArrow('next', 'Kita nuotrauka', CHEVRON_NEXT);
-    gallery.appendChild(dotsWrap);
+  function buildGallery(el, photos) {
+    if (!photos.length) return;
+    var i = 0;
+    var open = mkBtn('gal-open', 'Padidinti nuotrauką');
+    var img = document.createElement('img');
+    img.loading = 'lazy'; img.width = 1200; img.height = 896;
+    open.appendChild(img);
+    el.insertBefore(open, el.firstChild);
+    var dots = [];
+    function show(n) {
+      i = (n + photos.length) % photos.length;
+      img.src = photos[i][0]; img.alt = photos[i][1];
+      dots.forEach(function (d, k) { d.setAttribute('aria-current', k === i ? 'true' : 'false'); });
+    }
+    if (photos.length > 1) {
+      var prev = mkBtn('gal-btn gal-prev', 'Ankstesnė nuotrauka', CHEV_L);
+      var next = mkBtn('gal-btn gal-next', 'Kita nuotrauka', CHEV_R);
+      var wrap = document.createElement('div'); wrap.className = 'gal-dots';
+      photos.forEach(function (p, k) {
+        var d = mkBtn('gal-dot', 'Nuotrauka ' + (k + 1) + ' iš ' + photos.length);
+        d.addEventListener('click', function () { show(k); });
+        dots.push(d); wrap.appendChild(d);
+      });
+      prev.addEventListener('click', function () { show(i - 1); });
+      next.addEventListener('click', function () { show(i + 1); });
+      el.appendChild(prev); el.appendChild(next); el.appendChild(wrap);
+      swipe(el, function (d) { show(i + d); });
+    }
+    open.addEventListener('click', function () { openLightbox(photos, i, show, open); });
     show(0);
+  }
 
-    gallery.addEventListener('click', function () { show(index + 1); });
-
-    gallery.setAttribute('tabindex', '0');
-    gallery.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowRight') { e.preventDefault(); show(index + 1); }
-      else if (e.key === 'ArrowLeft') { e.preventDefault(); show(index - 1); }
-    });
-
-    var touchX = null;
-    gallery.addEventListener('touchstart', function (e) { touchX = e.touches[0].clientX; }, { passive: true });
-    gallery.addEventListener('touchend', function (e) {
-      if (touchX === null) return;
-      var dx = e.changedTouches[0].clientX - touchX;
-      touchX = null;
-      if (Math.abs(dx) > 40) { e.preventDefault(); show(index + (dx < 0 ? 1 : -1)); }
-    });
+  document.querySelectorAll('.gal[data-gallery]').forEach(function (el) {
+    buildGallery(el, STORE_PHOTOS[el.dataset.gallery] || []);
   });
 
-  // Live "Sezono naujienos" grid — see rpc_get_featured_products() in
-  // slebute-ops/supabase/migrations. Which products are eligible rotates
-  // daily server-side. Fetched via this Worker's own /api/featured route
-  // (worker.js), which holds a short edge cache in front of Supabase rather
-  // than this page hitting the production POS database directly on every
-  // load — see FEATURED_CACHE_SECONDS in worker.js.
+  // ---------- Contact panel ----------
+  var panel = document.getElementById('kontaktai');
+  var bubble = document.getElementById('chatBubble');
+  function setPanel(open, focusField) {
+    panel.hidden = !open;
+    bubble.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open && focusField) setTimeout(function () { document.getElementById('cf-name').focus(); }, 60);
+  }
+  bubble.addEventListener('click', function () { setPanel(panel.hidden, true); if (panel.hidden) bubble.focus(); });
+  document.getElementById('chatClose').addEventListener('click', function () { setPanel(false); bubble.focus(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !panel.hidden) { setPanel(false); bubble.focus(); } });
+  document.querySelectorAll('[data-open-chat]').forEach(function (a) {
+    a.addEventListener('click', function (e) { e.preventDefault(); setPanel(true, true); });
+  });
+  if (location.hash === '#kontaktai') setPanel(true, false);
 
-  // Sliding photo track used by both the product cards and the lightbox.
-  // Photos sit side by side; changing photo translates the track, so the old
-  // one slides out while the new one slides in. On touch screens the track
-  // follows the finger and snaps to the next/previous photo on release.
-  // It wraps: after the last photo comes the first (and the other way round),
-  // still sliding in the same direction. To make that seamless the track
-  // holds a copy of the last photo before the first and a copy of the first
-  // after the last; once a slide onto a copy finishes, the track jumps
-  // (unseen) to the real photo.
-  function createSlider(images, altBase, opts) {
-    opts = opts || {};
-    var n = images.length;
-    var multi = n > 1;
-    var el = document.createElement('div');
-    el.className = 'slider';
-    var track = document.createElement('div');
-    track.className = 'slider-track';
-    el.appendChild(track);
-
-    function addSlide(src, label, isCopy) {
-      var slide = document.createElement('div');
-      slide.className = 'slide';
-      var img = document.createElement('img');
-      img.src = src;
-      img.alt = isCopy ? '' : label;
-      img.draggable = false;
-      if (!opts.eager) img.loading = 'lazy';
-      if (isCopy) slide.setAttribute('aria-hidden', 'true');
-      slide.appendChild(img);
-      track.appendChild(slide);
-    }
-    function labelFor(i) {
-      if (!opts.numbered) return '';
-      return multi ? altBase + ' (' + (i + 1) + '/' + n + ')' : altBase;
-    }
-
-    if (multi) addSlide(images[n - 1], '', true);
-    images.forEach(function (src, i) { addSlide(src, labelFor(i), false); });
-    if (multi) addSlide(images[0], '', true);
-
-    var offset = multi ? 1 : 0; // slides before the first real photo
-    var index = 0;              // real photo index, 0..n-1
-    var pos = 0;                // track position; can sit on a copy mid-slide
-    var settleTimer = null;
-    var lastSwipeAt = 0;
-
-    function place(dx) {
-      track.style.transform = 'translateX(calc(' + (-(pos + offset) * 100) + '% + ' + (dx || 0) + 'px))';
-    }
-
-    // If the track is resting on a copy, jump to the matching real photo.
-    function settle() {
-      clearTimeout(settleTimer);
-      if (pos < 0 || pos > n - 1) {
-        pos = index;
-        track.classList.add('dragging');
-        place(0);
-        void track.offsetWidth; // flush so the next slide animates again
-        track.classList.remove('dragging');
-      }
-    }
-
-    track.addEventListener('transitionend', function (e) {
-      if (e.target === track) settle();
-    });
-
-    // i may be -1 or n: one step past either end, which wraps around.
-    function go(i, instant) {
-      if (!multi) return;
-      settle(); // a previous wrap may still be mid-slide
-      var wrapped = ((i % n) + n) % n;
-      var changed = wrapped !== index;
-      pos = i;
-      index = wrapped;
-      if (instant) {
-        pos = index;
-        track.classList.add('dragging');
-        place(0);
-        void track.offsetWidth;
-        track.classList.remove('dragging');
-      } else {
-        place(0);
-        if (pos !== index) settleTimer = setTimeout(settle, 450); // no transitionend (e.g. reduced motion)
-      }
-      if (changed && opts.onChange) opts.onChange(index);
-    }
-
-    var startX = null, startY = null, axis = null;
-    el.addEventListener('touchstart', function (e) {
-      if (!multi || e.touches.length !== 1) { startX = null; return; }
-      settle();
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-      axis = null;
-    }, { passive: true });
-
-    el.addEventListener('touchmove', function (e) {
-      if (startX === null) return;
-      var dx = e.touches[0].clientX - startX;
-      var dy = e.touches[0].clientY - startY;
-      if (axis === null && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) {
-        axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
-        if (axis === 'x') track.classList.add('dragging');
-      }
-      if (axis !== 'x') return;
-      place(dx);
-    }, { passive: true });
-
-    function endDrag(e) {
-      if (startX === null) return;
-      var dx = (e.changedTouches ? e.changedTouches[0].clientX : startX) - startX;
-      var wasX = axis === 'x';
-      startX = null;
-      axis = null;
-      track.classList.remove('dragging');
-      if (!wasX) return;
-      lastSwipeAt = Date.now(); // the browser may still fire a click after a swipe
-      var threshold = Math.min(70, el.clientWidth * 0.2);
-      if (dx < -threshold) go(index + 1);
-      else if (dx > threshold) go(index - 1);
-      else place(0);
-    }
-    el.addEventListener('touchend', endDrag);
-    el.addEventListener('touchcancel', endDrag);
-
-    el.addEventListener('click', function (e) {
-      if (Date.now() - lastSwipeAt < 400) return;
-      if (opts.onTap) opts.onTap(index, e);
-    });
-
-    place(0);
-
-    return {
-      el: el,
-      count: n,
-      getIndex: function () { return index; },
-      go: go,
-      wasSwiped: function () { return Date.now() - lastSwipeAt < 400; }
+  // Posts to /api/contact (worker.js, writes to D1). cf-website is a hidden honeypot:
+  // real visitors never fill it, so a non-empty value means a bot.
+  document.getElementById('contactForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var status = document.getElementById('cf-status');
+    var submitBtn = document.getElementById('cf-submit');
+    var payload = {
+      name: document.getElementById('cf-name').value.trim(),
+      contact: document.getElementById('cf-contact').value.trim(),
+      message: document.getElementById('cf-message').value.trim(),
+      website: document.getElementById('cf-website').value
     };
+    status.className = 'form-status';
+    status.textContent = '';
+    submitBtn.disabled = true;
+    try {
+      var resp = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      var data = await resp.json();
+      if (resp.ok && data.ok) {
+        status.className = 'form-status ok';
+        status.textContent = 'Ačiū! Žinutė išsiųsta – susisieksime greitai.';
+        document.getElementById('contactForm').reset();
+      } else {
+        status.className = 'form-status err';
+        status.textContent = data.error || 'Nepavyko išsiųsti. Pabandykite dar kartą.';
+      }
+    } catch (err) {
+      status.className = 'form-status err';
+      status.textContent = 'Nepavyko išsiųsti. Patikrinkite interneto ryšį ir pabandykite dar kartą.';
+    }
+    submitBtn.disabled = false;
+  });
+
+  // ---------- Products (live feed: /api/featured -> rpc_get_featured_products) ----------
+  var SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', 'XXXL', '3XL', '4XL', '5XL', '6XL'];
+  function sortSizes(list) {
+    return (list || []).slice().sort(function (a, b) {
+      var na = parseFloat(a), nb = parseFloat(b);
+      if (!isNaN(na) && !isNaN(nb)) return na - nb;
+      var ia = SIZE_ORDER.indexOf(String(a).toUpperCase()), ib = SIZE_ORDER.indexOf(String(b).toUpperCase());
+      if (ia > -1 && ib > -1) return ia - ib;
+      return String(a).localeCompare(String(b), 'lt');
+    });
+  }
+  function niceSize(s) { return /^one$/i.test(String(s)) ? 'vienas dydis' : String(s); }
+  function niceColour(c) { c = String(c || '').trim().toLowerCase(); return c.charAt(0).toUpperCase() + c.slice(1); }
+  function rangeText(r) {
+    if (!r) return '';
+    if (/^one$/i.test(r)) return 'Vienas dydis';
+    return 'Dydžiai: ' + String(r).replace(/\s*-\s*/g, '–');
+  }
+  function node(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined) n.textContent = text;
+    return n;
   }
 
-  // Product photo lightbox: one shared overlay, opened by clicking a card's
-  // photo. Shows each photo at full size (never cropped), with prev/next
-  // buttons, swipe with a sliding transition on touch screens, ArrowLeft/
-  // ArrowRight/Escape on keyboards, and tap-on-backdrop to close.
-  var lightbox = (function () {
-    var root = document.createElement('div');
-    root.className = 'lightbox';
-    root.setAttribute('role', 'dialog');
-    root.setAttribute('aria-modal', 'true');
-    root.setAttribute('aria-label', 'Prekės nuotraukos');
-    root.innerHTML =
-      '<span class="lightbox-counter" aria-live="polite"></span>' +
-      '<button type="button" class="lightbox-btn lightbox-close" aria-label="Uždaryti">' +
-        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
-      '<button type="button" class="lightbox-btn lightbox-prev" aria-label="Ankstesnė nuotrauka">' + CHEVRON_PREV + '</button>' +
-      '<button type="button" class="lightbox-btn lightbox-next" aria-label="Kita nuotrauka">' + CHEVRON_NEXT + '</button>' +
-      '<span class="lightbox-dots" aria-hidden="true"></span>';
-    document.body.appendChild(root);
+  var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l2.8 2.8L16 9.5"/></svg>';
+  var CROSS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9 9l6 6M15 9l-6 6"/></svg>';
 
-    var counter = root.querySelector('.lightbox-counter');
-    var dotsWrap = root.querySelector('.lightbox-dots');
-    var prevBtn = root.querySelector('.lightbox-prev');
-    var nextBtn = root.querySelector('.lightbox-next');
-    var closeBtn = root.querySelector('.lightbox-close');
-
-    var slider = null;
-    var opener = null;
-    var onClose = null;
-
-    function sync(i) {
-      var n = slider.count;
-      counter.textContent = n > 1 ? (i + 1) + ' / ' + n : '';
-      Array.prototype.forEach.call(dotsWrap.children, function (d, k) {
-        d.classList.toggle('active', k === i);
-      });
-    }
-
-    function close() {
-      if (!root.classList.contains('open')) return;
-      var finalIndex = slider.getIndex();
-      root.classList.remove('open');
-      document.body.classList.remove('lightbox-open');
-      root.removeChild(slider.el);
-      slider = null;
-      if (onClose) { onClose(finalIndex); onClose = null; }
-      if (opener) { opener.focus(); opener = null; }
-    }
-
-    function open(list, startIndex, alt, openerEl, closeCb) {
-      opener = openerEl || null;
-      onClose = closeCb || null;
-      slider = createSlider(list, alt, { eager: true, numbered: true, onChange: sync });
-      root.insertBefore(slider.el, root.firstChild);
-      dotsWrap.innerHTML = '';
-      var multi = list.length > 1;
-      dotsWrap.hidden = prevBtn.hidden = nextBtn.hidden = !multi;
-      if (multi) list.forEach(function () { dotsWrap.appendChild(document.createElement('span')); });
-      root.classList.add('open');
-      document.body.classList.add('lightbox-open');
-      slider.go(startIndex || 0, true);
-      sync(slider.getIndex());
-      closeBtn.focus();
-    }
-
-    prevBtn.addEventListener('click', function (e) { e.stopPropagation(); slider.go(slider.getIndex() - 1); });
-    nextBtn.addEventListener('click', function (e) { e.stopPropagation(); slider.go(slider.getIndex() + 1); });
-    closeBtn.addEventListener('click', function (e) { e.stopPropagation(); close(); });
-
-    // True when a click landed on the visible picture. The <img> element fills
-    // the whole screen (object-fit: contain letterboxes it), so the element
-    // alone can't tell the picture from the dark margin around it.
-    function onPicture(img, x, y) {
-      var box = img.getBoundingClientRect();
-      var w = img.naturalWidth, h = img.naturalHeight;
-      if (!w || !h) return true; // size unknown: don't risk closing on a photo click
-      var scale = Math.min(box.width / w, box.height / h);
-      var picW = w * scale, picH = h * scale;
-      var left = box.left + (box.width - picW) / 2;
-      var top = box.top + (box.height - picH) / 2;
-      return x >= left && x <= left + picW && y >= top && y <= top + picH;
-    }
-
-    // Clicking/tapping the dark area around a photo closes; clicking the photo
-    // itself does nothing (so a swipe or a stray tap never loses the photo).
-    root.addEventListener('click', function (e) {
-      if (!slider || slider.wasSwiped()) return;
-      if (e.target.closest('button')) return;
-      if (e.target.tagName === 'IMG' && onPicture(e.target, e.clientX, e.clientY)) return;
-      close();
-    });
-
-    document.addEventListener('keydown', function (e) {
-      if (!root.classList.contains('open')) return;
-      if (e.key === 'Escape') { e.preventDefault(); close(); }
-      else if (e.key === 'ArrowRight') { e.preventDefault(); slider.go(slider.getIndex() + 1); }
-      else if (e.key === 'ArrowLeft') { e.preventDefault(); slider.go(slider.getIndex() - 1); }
-      else if (e.key === 'Tab') {
-        // Keep focus inside the dialog.
-        var focusable = [closeBtn, prevBtn, nextBtn].filter(function (b) { return !b.hidden; });
-        var first = focusable[0], lastBtn = focusable[focusable.length - 1];
-        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); lastBtn.focus(); }
-        else if (!e.shiftKey && document.activeElement === lastBtn) { e.preventDefault(); first.focus(); }
-      }
-    });
-
-    return { open: open };
-  })();
-
-  // Builds a card's photo area. The whole photo is shown (no cropping) in a
-  // sliding track: the side arrows (and swipe on touch) flip between photos in
-  // place, while clicking/tapping the photo itself opens the lightbox at the
-  // photo currently showing. Products can have up to 4 photos.
-  function buildStockSwatch(images, altBase) {
-    var swatch = document.createElement('div');
-    swatch.className = 'stock-swatch';
-
-    if (!images.length) {
-      swatch.style.background = 'var(--accent-tint)';
-      swatch.setAttribute('aria-hidden', 'true');
-      return swatch;
-    }
-
-    var multi = images.length > 1;
-    var badge = null;
-
-    function sync(i) {
-      if (badge) badge.textContent = (i + 1) + ' / ' + images.length;
-    }
-
-    var slider = createSlider(images, altBase, {
-      onChange: sync,
-      onTap: function (i) {
-        lightbox.open(images, i, altBase, slider.el, function (finalIndex) {
-          slider.go(finalIndex, true);
+  function storeRow(store, feedStore) {
+    var st = stateOf(store);
+    var yes = false, text, pop = node('span', 'pop');
+    pop.setAttribute('role', 'tooltip');
+    if (st.closed) {
+      text = store.name + ' uždaryta, atsidarome ' + store.reopenShort;
+      pop.textContent = 'Šiuo metu ' + store.loc + ' prekės neturime. Parduotuvė atsidaro ' + store.reopenLong + '.';
+    } else if (feedStore && feedStore.in_stock) {
+      yes = true;
+      text = store.loc + ' yra';
+      var colours = (feedStore.colors || []).filter(function (c) { return c.sizes && c.sizes.length; });
+      if (colours.length) {
+        pop.appendChild(node('b', null, 'Turimi dydžiai ir spalvos'));
+        colours.forEach(function (c) {
+          pop.appendChild(node('div', null, niceColour(c.name) + ': ' + sortSizes(c.sizes).map(niceSize).join(', ')));
         });
+      } else if (feedStore.sizes && feedStore.sizes.length) {
+        pop.appendChild(node('b', null, 'Turimi dydžiai'));
+        pop.appendChild(node('div', null, sortSizes(feedStore.sizes).map(niceSize).join(', ')));
       }
-    });
-
-    var viewEl = slider.el;
-    viewEl.setAttribute('role', 'button');
-    viewEl.setAttribute('tabindex', '0');
-    viewEl.setAttribute('aria-label', altBase + ' – padidinti nuotrauką');
-    viewEl.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); lightbox.open(images, slider.getIndex(), altBase, viewEl, function (fi) { slider.go(fi, true); }); }
-      else if (e.key === 'ArrowRight') { e.preventDefault(); slider.go(slider.getIndex() + 1); }
-      else if (e.key === 'ArrowLeft') { e.preventDefault(); slider.go(slider.getIndex() - 1); }
-    });
-    swatch.appendChild(viewEl);
-
-    if (multi) {
-      function addArrow(dir, label, icon, delta) {
-        var btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'slider-arrow ' + dir;
-        btn.setAttribute('aria-label', label);
-        btn.innerHTML = icon;
-        btn.addEventListener('click', function (e) {
-          e.stopPropagation();
-          slider.go(slider.getIndex() + delta);
-        });
-        swatch.appendChild(btn);
-        return btn;
-      }
-      addArrow('prev', 'Ankstesnė nuotrauka', CHEVRON_PREV, -1);
-      addArrow('next', 'Kita nuotrauka', CHEVRON_NEXT, 1);
-
-      badge = document.createElement('span');
-      badge.className = 'stock-count';
-      badge.setAttribute('aria-hidden', 'true');
-      swatch.appendChild(badge);
-      sync(0);
+    } else {
+      text = store.loc + ' nėra';
+      pop.textContent = 'Šiuo metu ' + store.loc + ' prekės neturime';
     }
-
-    return swatch;
+    var row = node('button', 'srow ' + (yes ? 'yes' : 'no'));
+    row.type = 'button';
+    row.setAttribute('aria-expanded', 'false');
+    var icon = document.createElement('span');
+    icon.className = 'srow-icon'; icon.innerHTML = yes ? CHECK : CROSS; // our own constant icons
+    row.appendChild(icon);
+    row.appendChild(document.createTextNode(text));
+    if (pop.childNodes.length) row.appendChild(pop);
+    return row;
   }
-
-  // "Šiuo metu <vietininkas> prekės neturime" needs the locative case of the
-  // shop name; unknown names fall back to "<name> parduotuvėje".
-  var STORE_LOCATIVE = {
-    'Šeškinė': 'Šeškinėje',
-    'Pašilaičiai': 'Pašilaičiuose'
-  };
 
   function renderStockCard(item) {
-    var article = document.createElement('article');
-    article.className = 'stock-card';
-
-    var swatch = buildStockSwatch(item.images || [], item.name);
-    article.appendChild(swatch);
-
-    var body = document.createElement('div');
-    body.className = 'stock-body';
-
-    var name = document.createElement('span');
-    name.className = 'stock-name';
-    name.textContent = item.name;
-    body.appendChild(name);
-
-    // "Atvykstančios prekės" is the POS's virtual incoming-goods store, not a
-    // shop customers can visit — only real shops are listed here.
-    var shops = (item.stores || []).filter(function (store) {
-      return store.store_name !== 'Atvykstančios prekės';
+    var article = node('article', 'product');
+    var ph = node('div', 'ph gal');
+    if (item.is_new) ph.appendChild(node('span', 'badge', 'Naujiena'));
+    article.appendChild(ph);
+    var photos = (item.images || []).filter(function (u) { return typeof u === 'string' && u; }).map(function (u, k) {
+      return [u, item.name + ' – nuotrauka ' + (k + 1)];
     });
+    buildGallery(ph, photos);
 
-    if (shops.length) {
-      var stockLabel = document.createElement('span');
-      stockLabel.className = 'stock-label';
-      stockLabel.textContent = 'Esami prekių likučiai:';
-      body.appendChild(stockLabel);
-    }
-
-    var stores = document.createElement('div');
-    stores.className = 'stock-stores';
-    shops.forEach(function (store) {
-      var wrap = document.createElement('span');
-      wrap.className = 'store-dot-wrap' + (store.in_stock ? ' has-stock' : '');
-      wrap.setAttribute('aria-label', store.store_name + ': ' + (store.in_stock ? 'yra' : 'nėra'));
-
-      var dot = document.createElement('span');
-      dot.className = 'dot ' + (store.in_stock ? 'in-stock' : 'out-of-stock');
-      dot.setAttribute('aria-hidden', 'true');
-      dot.textContent = store.in_stock ? '✓' : '✕';
-      wrap.appendChild(dot);
-      wrap.appendChild(document.createTextNode(store.store_name));
-
-      var popText = null;
-      if (!store.in_stock) {
-        popText = 'Šiuo metu ' + (STORE_LOCATIVE[store.store_name] || store.store_name + ' parduotuvėje') + ' prekės neturime';
-      } else if (store.sizes && store.sizes.length) {
-        popText = 'Turimi dydžiai: ' + store.sizes.join(', ');
-      }
-
-      if (popText) {
-        wrap.classList.add('has-popover');
-        var pop = document.createElement('span');
-        pop.className = 'dot-popover';
-        pop.textContent = popText;
-        wrap.appendChild(pop);
-
-        // Hover handles desktop via CSS; this click handles touch, where
-        // :hover never fires — same tap-to-reveal convention as the store
-        // photo galleries above.
-        wrap.addEventListener('click', function (e) {
-          e.stopPropagation();
-          var wasOpen = wrap.classList.contains('popover-open');
-          document.querySelectorAll('.store-dot-wrap.popover-open').forEach(function (w) { w.classList.remove('popover-open'); });
-          if (!wasOpen) wrap.classList.add('popover-open');
-        });
-      }
-
-      stores.appendChild(wrap);
-    });
-    body.appendChild(stores);
-
+    var body = node('div', 'body');
+    body.appendChild(node('h3', null, item.name));
     if (item.code) {
-      var code = document.createElement('span');
-      code.className = 'stock-code';
-      code.textContent = 'Prekės kodas: ' + item.code;
-      body.appendChild(code);
+      var meta = node('div', 'price-row');
+      meta.appendChild(node('span', 'code', 'Prekės kodas: ' + item.code));
+      body.appendChild(meta);
     }
+    var range = rangeText(item.size_range);
+    if (range) body.appendChild(node('p', 'sizes', range));
 
+    var avail = node('div', 'avail');
+    var feedStores = item.stores || [];
+    STORES.forEach(function (store) {
+      var feedStore = feedStores.filter(function (s) { return s.store_name === store.name; })[0];
+      avail.appendChild(storeRow(store, feedStore));
+    });
+    body.appendChild(avail);
+
+    var reserve = node('button', 'btn btn-ghost btn-sm', 'Rezervuoti pasimatuoti');
+    reserve.type = 'button';
+    reserve.addEventListener('click', function () {
+      setPanel(true, true);
+      var msg = document.getElementById('cf-message');
+      if (!msg.value.trim()) {
+        msg.value = 'Sveiki, norėčiau pasimatuoti: ' + item.name + (item.code ? ' (kodas ' + item.code + ')' : '') + '. ';
+      }
+    });
+    body.appendChild(reserve);
     article.appendChild(body);
     return article;
   }
 
-  var FEATURED_FETCH_TIMEOUT_MS = 9000;
+  // Hover shows the popover on desktop (CSS); tap toggles it on touch screens.
+  function closeRows() {
+    document.querySelectorAll('.srow.open').forEach(function (r) { r.classList.remove('open'); r.setAttribute('aria-expanded', 'false'); });
+  }
+  var grid = document.getElementById('stockGrid');
+  grid.addEventListener('click', function (e) {
+    var row = e.target.closest('.srow');
+    if (!row) return;
+    e.stopPropagation();
+    var was = row.classList.contains('open');
+    closeRows();
+    if (!was) { row.classList.add('open'); row.setAttribute('aria-expanded', 'true'); }
+  });
+  document.addEventListener('click', closeRows);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeRows(); });
 
+  function showMessage(text, withRetry) {
+    grid.textContent = '';
+    var wrap = node('div', 'stock-empty');
+    wrap.appendChild(node('p', null, text));
+    if (withRetry) {
+      var btn = node('button', 'btn btn-ghost btn-sm', 'Bandyti dar kartą');
+      btn.type = 'button';
+      btn.addEventListener('click', loadFeaturedProducts);
+      wrap.appendChild(btn);
+    }
+    grid.appendChild(wrap);
+  }
+
+  var FEED_TIMEOUT_MS = 9000;
   async function loadFeaturedProducts() {
-    var grid = document.getElementById('stock-grid');
+    grid.textContent = '';
+    grid.appendChild(node('p', 'stock-empty', 'Kraunama…'));
     var controller = new AbortController();
-    var timeoutId = setTimeout(function () { controller.abort(); }, FEATURED_FETCH_TIMEOUT_MS);
+    var timeoutId = setTimeout(function () { controller.abort(); }, FEED_TIMEOUT_MS);
     try {
       var resp = await fetch('/api/featured', { signal: controller.signal });
       clearTimeout(timeoutId);
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       var items = await resp.json();
-
-      grid.innerHTML = '';
-      if (!items || !items.length) {
-        var empty = document.createElement('p');
-        empty.className = 'stock-empty';
-        empty.textContent = 'Informacija ruošiama - netrukus čia pamatysite mūsų populiariausias prekes.';
-        grid.appendChild(empty);
-        return;
-      }
+      if (!items || !items.length) { showMessage('Informacija ruošiama – netrukus čia pamatysite mūsų naujienas.', false); return; }
+      grid.textContent = '';
       items.forEach(function (item) { grid.appendChild(renderStockCard(item)); });
-    } catch (e) {
+    } catch (err) {
       clearTimeout(timeoutId);
-      console.error('Featured products load failed:', e);
-      renderFeaturedLoadError(grid);
+      console.error('Featured products load failed:', err);
+      showMessage('Nepavyko įkelti prekių. Patikrinkite interneto ryšį.', true);
     }
   }
-
-  // A hung connection previously left "Kraunama..." on screen forever with
-  // no failure ever surfaced (no AbortController on the fetch) and the only
-  // recourse was reloading the whole page. Now: a bounded timeout plus a
-  // same-page retry that just re-runs the load.
-  function renderFeaturedLoadError(grid) {
-    grid.innerHTML = '';
-    var msg = document.createElement('p');
-    msg.className = 'stock-empty';
-    msg.textContent = 'Nepavyko įkelti prekių.';
-    grid.appendChild(msg);
-
-    var retry = document.createElement('button');
-    retry.type = 'button';
-    retry.className = 'btn btn-ghost';
-    retry.style.marginTop = '0.5rem';
-    retry.textContent = 'Bandyti dar kartą';
-    retry.addEventListener('click', function () { loadFeaturedProducts(); });
-    grid.appendChild(retry);
-  }
-
-  document.addEventListener('click', function () {
-    document.querySelectorAll('.store-dot-wrap.popover-open').forEach(function (w) { w.classList.remove('popover-open'); });
-  });
-
   loadFeaturedProducts();
-
-  // Contact form — posts to /api/contact, handled by this Worker (worker.js),
-  // which writes to the slebute-contacts D1 database. cf-website is a hidden
-  // honeypot: real visitors never see or fill it, so a non-empty value means
-  // a bot filled every field on the page.
-  var contactForm = document.getElementById('contactForm');
-  if (contactForm) {
-    contactForm.addEventListener('submit', async function (e) {
-      e.preventDefault();
-      var status = document.getElementById('cf-status');
-      var submitBtn = document.getElementById('cf-submit');
-      var payload = {
-        name: document.getElementById('cf-name').value.trim(),
-        contact: document.getElementById('cf-contact').value.trim(),
-        message: document.getElementById('cf-message').value.trim(),
-        website: document.getElementById('cf-website').value
-      };
-      status.className = 'contact-status';
-      status.textContent = '';
-      submitBtn.disabled = true;
-      try {
-        var resp = await fetch('/api/contact', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        var data = await resp.json();
-        if (resp.ok && data.ok) {
-          status.className = 'contact-status ok';
-          status.textContent = 'Ačiū! Žinutė išsiųsta — susisieksime greitai.';
-          contactForm.reset();
-        } else {
-          status.className = 'contact-status err';
-          status.textContent = data.error || 'Nepavyko išsiųsti. Pabandykite dar kartą.';
-        }
-      } catch (err) {
-        status.className = 'contact-status err';
-        status.textContent = 'Nepavyko išsiųsti. Patikrinkite interneto ryšį ir pabandykite dar kartą.';
-      }
-      submitBtn.disabled = false;
-    });
-  }
-
-  // Chat bubble: opens/closes the contact panel. Closing never clears the form,
-  // so a half-written message survives; Esc closes and hands focus back to the
-  // bubble. The hero "Kontaktai" button (and a #kontaktai link) opens it too.
-  (function () {
-    var widget = document.getElementById('chatWidget');
-    var bubble = document.getElementById('chatBubble');
-    var panel = document.getElementById('chatPanel');
-    var closeBtn = document.getElementById('chatClose');
-    if (!widget || !bubble || !panel || !closeBtn) return;
-
-    function setOpen(open, focusFirstField) {
-      widget.classList.toggle('open', open);
-      bubble.setAttribute('aria-expanded', open ? 'true' : 'false');
-      bubble.setAttribute('aria-label', open ? 'Uždaryti žinutės langą' : 'Parašykite mums');
-      bubble.title = open ? 'Uždaryti' : 'Parašykite mums';
-      panel.setAttribute('aria-hidden', open ? 'false' : 'true');
-      if (open && focusFirstField) {
-        setTimeout(function () { document.getElementById('cf-name').focus(); }, 60);
-      }
-    }
-
-    bubble.addEventListener('click', function () {
-      setOpen(!widget.classList.contains('open'), true);
-    });
-    closeBtn.addEventListener('click', function () {
-      setOpen(false);
-      bubble.focus();
-    });
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && widget.classList.contains('open')) {
-        setOpen(false);
-        bubble.focus();
-      }
-    });
-    document.querySelectorAll('[data-open-chat]').forEach(function (link) {
-      link.addEventListener('click', function (e) {
-        e.preventDefault();
-        setOpen(true, true);
-      });
-    });
-    if (location.hash === '#kontaktai') setOpen(true, false);
-  })();
+})();
 </script>
 
 </body>
