@@ -2,6 +2,8 @@
 // form, and a cached read of the featured-products feed. Everything else
 // falls straight through to the static assets — see wrangler.jsonc's
 // "assets" binding.
+import { EmailMessage } from 'cloudflare:email';
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -184,27 +186,67 @@ async function handleContact(request, env) {
   // The D1 row above is the durable record of this submission — a failed
   // notification email must never fail the customer's submission, so this
   // is best-effort and swallows its own errors.
+  var notified = 'failed';
   try {
-    await notifyNewContact(env, name, contact, message);
+    notified = await notifyNewContact(env, name, contact, message);
   } catch (e) {
     console.error('Contact notification email failed:', e);
   }
 
-  return jsonResponse({ ok: true });
+  // X-Notify tells whoever tests the form (curl / devtools) whether the email went out; the customer-facing body is unchanged.
+  return new Response(JSON.stringify({ ok: true }), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json', 'X-Notify': notified }
+  });
 }
 
-// Requires the slebute.lt domain to be onboarded to Cloudflare Email
-// Service (adds SPF/DKIM records) and uzdanavicius@gmail.com verified as a
-// destination address — see the send_email binding in wrangler.jsonc.
-// Until both are done, env.EMAIL.send() will reject and this is silently
-// logged, not surfaced to the customer.
+// Owner notification for every contact-form submission (reservations included).
+// Two sending styles, tried in order; the first that works wins and its name is returned:
+//  1. 'routing' - Cloudflare Email Routing send_email binding: a raw MIME message to the
+//     verified destination address in wrangler.jsonc. Works while Email Routing is on for
+//     slebute.lt and uzdanavicius@gmail.com is a verified destination.
+//  2. 'service' - Cloudflare Email Service object form; needs slebute.lt onboarded for
+//     Email Sending (adds cf-bounce SPF/DKIM records).
+// If both reject, the error is thrown to handleContact, which logs it and sets X-Notify: failed.
+const NOTIFY_FROM = 'kontaktai@slebute.lt';
+const NOTIFY_TO = 'uzdanavicius@gmail.com';
+
+function utf8Base64(text) {
+  const bytes = new TextEncoder().encode(text);
+  let bin = '';
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  const b64 = btoa(bin);
+  return b64.replace(/(.{76})/g, '$1\r\n');
+}
+
+function buildMime(subject, text) {
+  return [
+    'From: =?UTF-8?B?' + utf8Base64('Šlebutė svetainė').replace(/\r\n/g, '') + '?= <' + NOTIFY_FROM + '>',
+    'To: ' + NOTIFY_TO,
+    'Subject: =?UTF-8?B?' + utf8Base64(subject).replace(/\r\n/g, '') + '?=',
+    'Date: ' + new Date().toUTCString().replace('GMT', '+0000'),
+    'Message-ID: <' + crypto.randomUUID() + '@slebute.lt>',
+    'MIME-Version: 1.0',
+    'Content-Type: text/plain; charset=UTF-8',
+    'Content-Transfer-Encoding: base64',
+    '',
+    utf8Base64(text)
+  ].join('\r\n');
+}
+
 async function notifyNewContact(env, name, contact, message) {
-  await env.EMAIL.send({
-    from: 'kontaktai@slebute.lt',
-    to: 'uzdanavicius@gmail.com',
-    subject: 'Nauja užklausa iš slebute.lt — ' + name,
-    text: 'Vardas: ' + name + '\nKontaktas: ' + contact + '\n\nŽinutė:\n' + message
-  });
+  const isReservation = /pasimatuoti/i.test(message);
+  const subject = (isReservation ? 'Rezervacija pasimatuoti' : 'Nauja užklausa') + ' iš slebute.lt — ' + name.slice(0, 40);
+  const text = 'Vardas: ' + name + '\nKontaktas: ' + contact + '\n\nŽinutė:\n' + message;
+
+  try {
+    await env.EMAIL.send(new EmailMessage(NOTIFY_FROM, NOTIFY_TO, buildMime(subject, text)));
+    return 'routing';
+  } catch (e) {
+    console.error('Email Routing style send failed, trying Email Service style:', e);
+  }
+  await env.EMAIL.send({ from: NOTIFY_FROM, to: NOTIFY_TO, subject: subject, text: text });
+  return 'service';
 }
 
 function jsonResponse(data, status) {
