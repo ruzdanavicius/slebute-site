@@ -1554,11 +1554,26 @@
     nextBtn.addEventListener('click', function (e) { e.stopPropagation(); slider.go(slider.getIndex() + 1); });
     closeBtn.addEventListener('click', function (e) { e.stopPropagation(); close(); });
 
-    // Tapping the dark area around a photo closes; tapping the photo itself
-    // does nothing (so a swipe or a stray tap never loses the photo).
+    // True when a click landed on the visible picture. The <img> element fills
+    // the whole screen (object-fit: contain letterboxes it), so the element
+    // alone can't tell the picture from the dark margin around it.
+    function onPicture(img, x, y) {
+      var box = img.getBoundingClientRect();
+      var w = img.naturalWidth, h = img.naturalHeight;
+      if (!w || !h) return true; // size unknown: don't risk closing on a photo click
+      var scale = Math.min(box.width / w, box.height / h);
+      var picW = w * scale, picH = h * scale;
+      var left = box.left + (box.width - picW) / 2;
+      var top = box.top + (box.height - picH) / 2;
+      return x >= left && x <= left + picW && y >= top && y <= top + picH;
+    }
+
+    // Clicking/tapping the dark area around a photo closes; clicking the photo
+    // itself does nothing (so a swipe or a stray tap never loses the photo).
     root.addEventListener('click', function (e) {
       if (!slider || slider.wasSwiped()) return;
-      if (e.target.closest('button') || e.target.tagName === 'IMG') return;
+      if (e.target.closest('button')) return;
+      if (e.target.tagName === 'IMG' && onPicture(e.target, e.clientX, e.clientY)) return;
       close();
     });
 
