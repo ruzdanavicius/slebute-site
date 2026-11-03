@@ -263,8 +263,11 @@
 
   /* photo galleries (stores + products) */
   .gal { position: relative; }
-  .gal-open { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; display: block; }
+  .gal-open { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; display: block; overflow: hidden; }
   .gal-open img { width: 100%; height: 100%; object-fit: cover; }
+  .gal, .lb { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+  .sl-track { display: flex; width: 100%; height: 100%; transition: transform .4s cubic-bezier(.22,.85,.3,1); will-change: transform; }
+  .sl-slide { flex: 0 0 100%; min-width: 0; height: 100%; }
   .gal .badge { z-index: 3; }
   .gal-btn { position: absolute; top: 50%; transform: translateY(-50%); z-index: 3; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255,255,255,.88); color: var(--ink); display: grid; place-items: center; cursor: pointer; box-shadow: 0 1px 6px rgba(0,0,0,.25); font-size: 1.4rem; line-height: 1; }
   .gal-btn:hover { background: #fff; }
@@ -274,8 +277,10 @@
   .gal-dots { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 3; display: flex; gap: 6px; padding: 6px 10px; border-radius: 999px; background: rgba(36,26,31,.5); }
   .gal-dot { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 50%; background: rgba(255,255,255,.55); cursor: pointer; }
   .gal-dot[aria-current="true"] { background: #fff; width: 18px; border-radius: 4px; }
-  .lb { position: fixed; inset: 0; z-index: 100; background: rgba(20,12,16,.93); display: grid; place-items: center; padding: 56px 16px; }
-  .lb img { max-width: min(94vw, 1100px); max-height: calc(100vh - 120px); object-fit: contain; border-radius: 8px; }
+  .lb { position: fixed; inset: 0; z-index: 100; background: rgba(20,12,16,.93); overflow: hidden; }
+  .lb .sl-track { position: absolute; inset: 0; }
+  .lb .sl-slide { display: grid; place-items: center; padding: 56px 16px; box-sizing: border-box; }
+  .lb img { width: auto; height: auto; max-width: min(94vw, 1100px); max-height: calc(100vh - 120px); object-fit: contain; border-radius: 8px; }
   .lb .gal-btn { background: rgba(255,255,255,.14); color: #fff; width: 48px; height: 48px; }
   .lb .gal-btn:hover { background: rgba(255,255,255,.28); }
   .lb .lb-close { top: max(28px, calc(env(safe-area-inset-top, 0px) + 28px)); right: max(28px, calc(env(safe-area-inset-right, 0px) + 28px)); left: auto; }
@@ -361,7 +366,7 @@
     .store-qr { display: none; }
     .store-map { height: 210px; }
   }
-  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .product .ph img { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .product .ph img { transition: none; } .sl-track { transition-duration: .01s; } }
 
   /* live-site additions */
   [hidden] { display: none !important; }
@@ -667,80 +672,136 @@
     b.type = 'button'; b.className = cls; b.setAttribute('aria-label', label); b.innerHTML = html || ''; // html is only our own constant icons
     return b;
   }
-  function swipe(el, go) {
-    var x0 = null;
-    el.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });
-    el.addEventListener('touchend', function (e) {
-      if (x0 === null) return;
-      var dx = e.changedTouches[0].clientX - x0; x0 = null;
-      if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
-    }, { passive: true });
+  // One horizontal track of slides that follows the finger while dragging and eases to the nearest photo on release.
+  function slider(vp, photos, onIndex, lazyFirst) {
+    var n = photos.length, i = 0, lastDrag = 0;
+    var track = document.createElement('div');
+    track.className = 'sl-track';
+    var imgs = photos.map(function (p) {
+      var slide = document.createElement('div'); slide.className = 'sl-slide';
+      var im = document.createElement('img'); im.alt = p[1]; im.draggable = false;
+      slide.appendChild(im); track.appendChild(slide);
+      return im;
+    });
+    if (lazyFirst) imgs[0].loading = 'lazy';
+    function load(k) {
+      var im = imgs[(k + n) % n];
+      if (!im.getAttribute('src')) im.src = photos[(k + n) % n][0];
+    }
+    function around() { load(i - 1); load(i + 1); }
+    function pos(px, animate) {
+      track.style.transition = animate ? '' : 'none';
+      track.style.transform = 'translate3d(calc(' + (-i * 100) + '% + ' + px + 'px),0,0)';
+    }
+    function show(k, instant) {
+      i = ((k % n) + n) % n;
+      load(i);
+      var cur = imgs[i];
+      if (cur.complete && cur.naturalWidth) around(); else cur.addEventListener('load', around, { once: true });
+      pos(0, !instant);
+      onIndex(i);
+    }
+
+    if (n > 1) {
+      vp.style.touchAction = 'pan-y'; // vertical scrolling stays native, horizontal moves come to us
+      var down = false, dragging = false, pid = 0, sx = 0, sy = 0, t0 = 0, dx = 0;
+      vp.addEventListener('pointerdown', function (e) {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        if (e.target.closest && e.target.closest('.gal-btn, .gal-dot')) return;
+        down = true; dragging = false; dx = 0; pid = e.pointerId; sx = e.clientX; sy = e.clientY; t0 = e.timeStamp;
+        around();
+      });
+      vp.addEventListener('pointermove', function (e) {
+        if (!down || e.pointerId !== pid) return;
+        var mx = e.clientX - sx, my = e.clientY - sy;
+        if (!dragging) {
+          if (Math.abs(mx) < 6 && Math.abs(my) < 6) return;
+          if (Math.abs(my) > Math.abs(mx)) { down = false; return; }
+          dragging = true;
+          try { vp.setPointerCapture(pid); } catch (err) { /* capture is only a nicety */ }
+        }
+        dx = mx;
+        if ((i === 0 && dx > 0) || (i === n - 1 && dx < 0)) dx = dx * 0.3; // resist at the first and last photo
+        pos(dx, false);
+      });
+      var end = function (e) {
+        if (!down || e.pointerId !== pid) return;
+        down = false;
+        if (!dragging) return;
+        dragging = false; lastDrag = Date.now();
+        var w = vp.clientWidth || 1, v = dx / Math.max(1, e.timeStamp - t0);
+        var dir = (Math.abs(dx) > w * 0.22 || (Math.abs(v) > 0.35 && Math.abs(dx) > 20)) ? (dx < 0 ? 1 : -1) : 0;
+        if (dir && i + dir >= 0 && i + dir < n) show(i + dir); else pos(0, true);
+      };
+      vp.addEventListener('pointerup', end);
+      vp.addEventListener('pointercancel', end);
+    }
+    return {
+      track: track, show: show,
+      index: function () { return i; },
+      recentDrag: function () { return Date.now() - lastDrag < 350; }
+    };
   }
 
   function openLightbox(photos, start, onChange, opener) {
-    var i = start;
     var lb = document.createElement('div');
     lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Nuotraukos');
-    var img = document.createElement('img');
     var close = mkBtn('gal-btn lb-close', 'Uždaryti', '&times;');
     var prev = mkBtn('gal-btn gal-prev', 'Ankstesnė nuotrauka', CHEV_L);
     var next = mkBtn('gal-btn gal-next', 'Kita nuotrauka', CHEV_R);
     var count = document.createElement('div'); count.className = 'lb-count';
-    lb.appendChild(img); lb.appendChild(close); lb.appendChild(count);
+    var s = slider(lb, photos, function (k) {
+      count.textContent = (k + 1) + ' / ' + photos.length;
+      onChange(k);
+    });
+    lb.appendChild(s.track); lb.appendChild(close); lb.appendChild(count);
     if (photos.length > 1) { lb.appendChild(prev); lb.appendChild(next); }
-    function show(n) {
-      i = (n + photos.length) % photos.length;
-      img.src = photos[i][0]; img.alt = photos[i][1];
-      count.textContent = (i + 1) + ' / ' + photos.length;
-      onChange(i);
-    }
     function shut() { document.removeEventListener('keydown', key); lb.remove(); opener.focus(); }
     function key(e) {
       if (e.key === 'Escape') shut();
-      else if (e.key === 'ArrowLeft' && photos.length > 1) show(i - 1);
-      else if (e.key === 'ArrowRight' && photos.length > 1) show(i + 1);
+      else if (e.key === 'ArrowLeft' && photos.length > 1) s.show(s.index() - 1);
+      else if (e.key === 'ArrowRight' && photos.length > 1) s.show(s.index() + 1);
     }
     close.addEventListener('click', shut);
-    prev.addEventListener('click', function () { show(i - 1); });
-    next.addEventListener('click', function () { show(i + 1); });
-    lb.addEventListener('click', function (e) { if (e.target === lb) shut(); });
-    swipe(lb, function (d) { if (photos.length > 1) show(i + d); });
+    prev.addEventListener('click', function () { s.show(s.index() - 1); });
+    next.addEventListener('click', function () { s.show(s.index() + 1); });
+    lb.addEventListener('click', function (e) {
+      if (s.recentDrag() || e.target.closest('img, button')) return;
+      shut();
+    });
     document.addEventListener('keydown', key);
     document.body.appendChild(lb);
-    show(i);
+    s.show(start, true);
     close.focus();
   }
 
   function buildGallery(el, photos) {
     if (!photos.length) return;
-    var i = 0;
     var open = mkBtn('gal-open', 'Padidinti nuotrauką');
-    var img = document.createElement('img');
-    img.loading = 'lazy'; img.width = 1200; img.height = 896;
-    open.appendChild(img);
     el.insertBefore(open, el.firstChild);
-    var dots = [];
-    function show(n) {
-      i = (n + photos.length) % photos.length;
-      img.src = photos[i][0]; img.alt = photos[i][1];
-      dots.forEach(function (d, k) { d.setAttribute('aria-current', k === i ? 'true' : 'false'); });
-    }
+    var dots = [], s;
+    s = slider(el, photos, function (k) {
+      dots.forEach(function (d, j) { d.setAttribute('aria-current', j === k ? 'true' : 'false'); });
+    }, true);
+    open.appendChild(s.track);
     if (photos.length > 1) {
       var prev = mkBtn('gal-btn gal-prev', 'Ankstesnė nuotrauka', CHEV_L);
       var next = mkBtn('gal-btn gal-next', 'Kita nuotrauka', CHEV_R);
       var wrap = document.createElement('div'); wrap.className = 'gal-dots';
       photos.forEach(function (p, k) {
         var d = mkBtn('gal-dot', 'Nuotrauka ' + (k + 1) + ' iš ' + photos.length);
-        d.addEventListener('click', function () { show(k); });
+        d.addEventListener('click', function () { s.show(k); });
         dots.push(d); wrap.appendChild(d);
       });
-      prev.addEventListener('click', function () { show(i - 1); });
-      next.addEventListener('click', function () { show(i + 1); });
+      prev.addEventListener('click', function () { s.show(s.index() - 1); });
+      next.addEventListener('click', function () { s.show(s.index() + 1); });
       el.appendChild(prev); el.appendChild(next); el.appendChild(wrap);
-      swipe(el, function (d) { show(i + d); });
     }
-    open.addEventListener('click', function () { openLightbox(photos, i, show, open); });
-    show(0);
+    open.addEventListener('click', function () {
+      if (s.recentDrag()) return;
+      openLightbox(photos, s.index(), function (k) { s.show(k, true); }, open);
+    });
+    s.show(0, true);
   }
 
   document.querySelectorAll('.gal[data-gallery]').forEach(function (el) {
