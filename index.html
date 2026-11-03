@@ -588,14 +588,14 @@
     }
     var t = vilnius(), h = store.hours[t.dow], text;
     if (h && t.mins >= h[0] && t.mins < h[1]) {
-      return { open: true, text: 'Atidaryta dabar, iki ' + clock(h[1]), hero: store.name + ': atidaryta dabar, iki ' + clock(h[1]) };
+      return { open: true, text: 'Šiandien atidaryta iki ' + clock(h[1]), hero: store.name + ': atidaryta dabar, iki ' + clock(h[1]) };
     }
     if (h && t.mins < h[0]) {
-      text = 'Šiandien atidarysime ' + clock(h[0]);
+      text = 'Uždaryta. Kviečiame užsukti šiandien nuo ' + clock(h[0]);
     } else {
       for (var i = 1; i <= 7; i++) {
         var d = (t.dow + i) % 7;
-        if (store.hours[d]) { text = 'Uždaryta. Atidarysime ' + (i === 1 ? 'rytoj' : DAY_ACC[d]) + ' ' + clock(store.hours[d][0]); break; }
+        if (store.hours[d]) { text = 'Uždaryta. Kviečiame užsukti ' + (i === 1 ? 'rytoj' : DAY_ACC[d]) + ' nuo ' + clock(store.hours[d][0]); break; }
       }
     }
     return { open: false, text: text, hero: store.name + ': ' + lowerFirst(text) };
