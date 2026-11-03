@@ -212,7 +212,7 @@
   .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--off); flex: none; }
   .status.open .dot, .pill.open .dot { background: var(--ok); box-shadow: 0 0 0 3px var(--ok-soft); }
   .hero-photo { border-radius: 28px; overflow: hidden; justify-self: end; width: 100%; background: var(--card); box-shadow: 0 24px 60px rgba(107,37,69,.14); border: 1px solid var(--line); }
-  .hero-photo img { width: 100%; height: auto; aspect-ratio: 1.6 / 1; object-fit: cover; object-position: 50% 10%; }
+  .hero-photo img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; object-position: 50% 50%; }
   .hero-tag { display: flex; flex-direction: column; padding: 2px 20px 4px; }
   .hero-tag-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; }
   .hero-tag-row + .hero-tag-row { border-top: 1px solid var(--line); }
@@ -344,6 +344,7 @@
     .nav a.link { display: none; }
     .hero { grid-template-columns: 1fr; }
     .hero-photo { justify-self: stretch; order: -1; }
+    .hero-photo img { aspect-ratio: 1 / 1; object-position: 62% 50%; } /* square on phones: keeps both faces, the sign and the bag */
     /* phones and tablets: the hero card already shows both shops, hours and map links, so the buttons and status lines are desktop-only */
     .cta-row, .status-list { display: none; }
     .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
@@ -426,7 +427,7 @@
       </div>
     </div>
     <div class="hero-photo">
-      <img src="assets/hero.webp" alt="Languota sarafano tipo suknelė su diržu" width="896" height="1200" fetchpriority="high">
+      <img src="assets/hero.webp" alt="Dvi moterys su Šlebutė pirkinių maišeliais prie parduotuvės įėjimo" width="1200" height="896" fetchpriority="high">
       <div class="hero-tag">
         <div class="hero-tag-row">
           <div>
