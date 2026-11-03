@@ -187,18 +187,16 @@ async function handleContact(request, env) {
   // notification email must never fail the customer's submission, so this
   // is best-effort and swallows its own errors.
   var notified = 'failed';
-  var notifyError = '';
   try {
     notified = await notifyNewContact(env, name, contact, message);
   } catch (e) {
     console.error('Contact notification email failed:', e);
-    notifyError = String((e && e.message) || e).replace(/[\r\n]+/g, ' ').slice(0, 300);
   }
 
   // X-Notify tells whoever tests the form (curl / devtools) whether the email went out; the customer-facing body is unchanged.
   return new Response(JSON.stringify({ ok: true }), {
     status: 200,
-    headers: Object.assign({ 'Content-Type': 'application/json', 'X-Notify': notified }, notifyError ? { 'X-Notify-Error': notifyError } : {})
+    headers: { 'Content-Type': 'application/json', 'X-Notify': notified }
   });
 }
 
